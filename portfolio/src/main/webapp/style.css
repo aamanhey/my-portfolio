@@ -7,3 +7,28 @@
 #greeting-container {
   margin-top: 20px;
 }
+
+body {
+    background-color: white;
+}
+
+subtitle {
+    color: orange;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+h1 {
+    color: dodgerblue;
+    text-align: center;
+}
+
+h2 {
+    color: mediumseagreen;
+    text-align: left;
+}
+
+p {
+    color: #666666;
+    font-family: Georgia, serif;
+    font-size: 18px;
+}
