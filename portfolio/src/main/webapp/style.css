@@ -1,15 +1,19 @@
-#content {
+/*#content {
   margin-left: auto;
   margin-right: auto;
   width: 650px;
 }
-
+*/
 #greeting-container {
   margin-top: 20px;
 }
 
+* {
+    box-sizing: border-box;
+}
+
 body {
-    background-color: white;
+    background-color: lightgrey;
 }
 
 subtitle {
@@ -31,4 +35,107 @@ p {
     color: #666666;
     font-family: Georgia, serif;
     font-size: 18px;
+}
+
+.header {
+    background-color: gold;
+    text-align: center;
+    padding: 20px;
+}
+
+.footer {
+    text-align: center;
+    color: gold;
+    padding: 20px;
+}
+
+.navigationbar {
+    overflow: hidden;
+    background-color: goldenrod;
+}
+
+.navigationbar a {
+    float: left;
+    display: block;
+    color: #f2f2f2;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.navigationbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+
+div.gallery {
+  margin: 1px;
+  align-content: center;
+  width: 33%;
+  float:left;
+  height: auto;
+}
+
+div.gallery:hover {
+  border: 1px solid #777;
+}
+
+
+div.gallery img {
+  width: 100%;
+  height: auto;
+  border: 5px solid #ccc;
+  align-content: center;
+}
+
+
+div.img_desc {
+  padding: 15px;
+  text-align: center;
+}
+
+
+.tab div {
+    display: none;
+}
+
+.tab div:target {
+    display: block;
+}
+
+.column {
+    float: center
+}
+
+.leftcolumn {
+    float: center;
+    align-content: center;
+    width: 70%;
+    height: auto;
+}
+
+.rightcolumn {
+    float: center;
+    width: 30%;
+    padding: 20px;
+}
+
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+.topic {
+    background-color: whitesmoke;
+    padding: 20px;
+    margin-top:20px;
+}
+
+/*makes the columns stack ontop instead of next to each other*/
+@media screen and (max-width:600px) {
+  .column {
+    width: 100%;
+  }
 }
