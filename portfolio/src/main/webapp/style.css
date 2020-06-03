@@ -105,19 +105,18 @@ div.img_desc {
 }
 
 .column {
-    float: center
+  float: left;
+  /*width: 50%;*/
 }
 
 .leftcolumn {
-    float: center;
-    align-content: center;
-    width: 70%;
-    height: auto;
+    float: left;
+    width: 75%;
 }
 
 .rightcolumn {
-    float: center;
-    width: 30%;
+    float: left;
+    width: 25%;
     padding: 20px;
 }
 
