@@ -32,4 +32,3 @@ async function getContent() {
   const message = await response.text();
   document.getElementById('message-container').innerText = message;
 }
-//HELLLLLLLLLLLLLLLLLLLLLLLLOOOOOOOOOOOOOOOOOOOo
