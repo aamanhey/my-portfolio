@@ -26,7 +26,30 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    response.setContentType("text/html;");
-    response.getWriter().println("Hello Adrian!"); 
+    String json = convertToJson(comments);
+
+    response.setContentType("text/html;");//going to priint directly on page
+    response.getWriter().println(json);
     }
+
+  ArrayList<String> comments = new ArrayList<>;
+  comments.add("This website is cool!");
+  comments.add("I like your pictures!");
+  comments.add("The colors look nice together!");
+
+
+  private String convertToJson(ArrayList<String> list){
+    String json = "['"+
+    int i;
+    for(i=0;i<list.size();i++){
+      json += "{'Comment "+i+"' : '";
+      if(i == list.size() - 1){
+        json += list.get(i) + "}";
+      }else{
+        json += list.get(i) + "},";
+    }
+    }
+    json += "]";
+    return json;
+  }
 }

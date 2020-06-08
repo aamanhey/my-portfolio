@@ -32,3 +32,11 @@ async function getContent() {
   const message = await response.text();
   document.getElementById('message-container').innerText = message;
 }
+
+function getComments(){
+   String json = fetch('/data')
+   response.setContentType("text/html;");//going to priint directly on page
+   response.getWriter().println(json);;
+  }
+
+}
