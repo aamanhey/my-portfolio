@@ -132,6 +132,11 @@ div.img_desc {
     margin-top:20px;
 }
 
+#profPic {
+  width: 100%;
+  height: auto;
+}
+
 /*makes the columns stack ontop instead of next to each other*/
 @media screen and (max-width:600px) {
   .column {

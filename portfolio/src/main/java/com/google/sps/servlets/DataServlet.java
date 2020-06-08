@@ -39,6 +39,7 @@ public class DataServlet extends HttpServlet {
     }
   
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    comments.add("I like your pictures!");
     String name = request.getParameter("name-input");
     String text = request.getParameter("text-input");
     response.setContentType("text/html;");
