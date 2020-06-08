@@ -24,10 +24,10 @@ import java.util.ArrayList;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+    ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    ArrayList<String> comments = new ArrayList<String>();
     comments.add("This website is cool!");
     comments.add("I like your pictures!");
     comments.add("The colors look nice together!");
@@ -37,6 +37,14 @@ public class DataServlet extends HttpServlet {
     response.setContentType("text/html;");//going to priint directly on page
     response.getWriter().println(json);
     }
+  
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    String name = request.getParameter("name-input");
+    String text = request.getParameter("text-input");
+    response.setContentType("text/html;");
+    comments.add(text);
+    response.getWriter().println(comments);
+  }
 
   private String convertToJson(ArrayList<String> list){
     String json = "['";

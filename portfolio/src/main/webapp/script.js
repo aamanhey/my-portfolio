@@ -34,9 +34,19 @@ async function getContent() {
 }
 
 function getComments(){
-   String json = fetch('/data')
    response.setContentType("text/html;");//going to priint directly on page
    response.getWriter().println(json);;
-  }
+   fetch('/data').then(response => response.json()).then((list) => {
 
+    const commentList = document.getElementById('');
+    statsListElement.innerHTML = '';
+    statsListElement.appendChild(
+        createListElement('Start time: ' + stats.startTime));
+    statsListElement.appendChild(
+        createListElement('Current time: ' + stats.currentTime));
+    statsListElement.appendChild(
+        createListElement('Max memory: ' + stats.maxMemory));
+    statsListElement.appendChild(
+        createListElement('Used memory: ' + stats.usedMemory));
+  });
 }
