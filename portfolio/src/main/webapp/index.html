@@ -76,7 +76,14 @@
             </div>
           <div class="topic">
             <h2>Comments</h2>
-            <
+            <div id = "comments-container"></div>
+            <form action="/data" method="POST">
+              <textarea name="name-input">Name</textarea>
+              <textarea name="text-input">Comment</textarea>
+              <br/><br/>
+              <input type="submit" />  
+              </form>
+            </div>
           <div class="topic">
             <div id="contact_tab">
               <h2>Contact Me</h2>
@@ -86,21 +93,6 @@
               <p>Oxy Email: amanhey@oxy.edu</p>
               </div>
             </div>
-          </div>
-        <div class ="topic">
-          <button onclick="getContent()">Get a message!</button>
-          <div id = "message-container"></div>
-          </div>
-        <div class ="topic">
-            <div id = "comments-container"></div>
-          </div>
-        <div class ="topic">
-          <form action="/data" method="POST">
-            <textarea name="name-input">Name</textarea>
-            <textarea name="text-input">Comment</textarea>
-            <br/><br/>
-            <input type="submit" />  
-          </form>
           </div>
       </div>
   </body>
