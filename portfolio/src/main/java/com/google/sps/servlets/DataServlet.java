@@ -19,6 +19,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -26,20 +27,19 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    ArrayList<String> comments = new ArrayList<String>();
+    comments.add("This website is cool!");
+    comments.add("I like your pictures!");
+    comments.add("The colors look nice together!");
+
     String json = convertToJson(comments);
 
     response.setContentType("text/html;");//going to priint directly on page
     response.getWriter().println(json);
     }
 
-  ArrayList<String> comments = new ArrayList<>;
-  comments.add("This website is cool!");
-  comments.add("I like your pictures!");
-  comments.add("The colors look nice together!");
-
-
   private String convertToJson(ArrayList<String> list){
-    String json = "['"+
+    String json = "['";
     int i;
     for(i=0;i<list.size();i++){
       json += "{'Comment "+i+"' : '";
