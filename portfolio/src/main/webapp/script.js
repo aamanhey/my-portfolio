@@ -34,13 +34,26 @@ async function getContent() {
 }
 
 function getComments(){
-   fetch('/data').then(response => response.json()).then((list) => {
-       console.log(list);
-    var messageBoard = document.createTextNode(list);
-    document.getElementById('comments-container').appendChild(message);      
+   fetch('/data').then(response => response.json()).then((comments) => {
+    console.log(comments);
+    const messageBoard = document.getElementById('comments-container');
+    comments.forEach((comment) => {
+      messageBoard.appendChild(createCmtEl(comment));
+    })    
   });
 }
 
-function createMsgBoard(list){
+function createCmtEl(comment) {
+  const comElem = document.createElement('li');
+  comElem.className = 'Comment';
 
+  const nameElem = document.createElement('span');
+  nameElem.innerText = comment.name;
+
+  const txtElem = document.createElement('span');
+  txtElem.innerText = comment.text;
+
+  comElem.appendChild(nameElem);
+  comElem.appendChild(txtElem);
+  return comElem;
 }
