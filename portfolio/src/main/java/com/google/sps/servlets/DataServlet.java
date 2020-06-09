@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import com.google.gson.Gson;
 
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
@@ -28,10 +29,6 @@ public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    comments.add("This website is cool!");
-    comments.add("I like your pictures!");
-    comments.add("The colors look nice together!");
-
     String json = convertToJson(comments);
 
     response.setContentType("text/html;");//going to priint directly on page
@@ -39,15 +36,20 @@ public class DataServlet extends HttpServlet {
     }
   
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-    comments.add("I like your pictures!");
     String name = request.getParameter("name-input");
     String text = request.getParameter("text-input");
-    response.setContentType("text/html;");
     comments.add(text);
-    response.getWriter().println(comments);
+    response.setContentType("text/html;");
+    //response.getWriter().println(comments);
+    response.sendRedirect("/index.html");
   }
 
-  private String convertToJson(ArrayList<String> list){
+  private static String convertToJson(ArrayList<String> messages) {
+        Gson gson = new Gson();
+        return gson.toJson(messages);
+    }
+
+  private String convertToJsonW(ArrayList<String> list){
     String json = "['";
     int i;
     for(i=0;i<list.size();i++){
