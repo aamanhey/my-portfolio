@@ -36,7 +36,11 @@ async function getContent() {
 function getComments(){
    fetch('/data').then(response => response.json()).then((list) => {
        console.log(list);
-    var message = document.createTextNode(list);
+    var messageBoard = document.createTextNode(list);
     document.getElementById('comments-container').appendChild(message);      
   });
+}
+
+function createMsgBoard(list){
+
 }
