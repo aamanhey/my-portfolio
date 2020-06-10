@@ -41,12 +41,20 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
-    int numberComments = Integer.parseInt(request.getParameter("user-comment-num"));
+    //equal string and check to see if it null
+    //if null set equal to default
+    String userNum = request.getParameter("user-comment-num");
+    int numberComments;
+    if (userNum == null){
+        numberComments = 5;
+    }else{
+        numberComments = Integer.parseInt(userNum);
+    }
     int numberLoaded = 0;
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for(Entity entity : results.asIterable()){
-        if (numberLoaded <= numberComments){
+        if (numberLoaded < numberComments){
             long id = entity.getKey().getId();
             String name = (String) entity.getProperty("name");
             String text = (String) entity.getProperty("text");
@@ -54,6 +62,7 @@ public class DataServlet extends HttpServlet {
 
             Comment comment = new Comment(id, name, text, timestamp);
             comments.add(comment);
+            numberLoaded += 1;
         }else{
             break;
         }
@@ -63,8 +72,6 @@ public class DataServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     response.getWriter().println(jsoncom);
-    response.sendRedirect("/index.html");
-
     }
   
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{

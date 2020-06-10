@@ -77,10 +77,10 @@
           <div class = "topic">
               <h2>Comments</h2>
               <div id = "comments-container"></div>
-              <form action="/data" method="GET">
+              <form method="GET">
                 <p>How many comments would you like to view?(1-10)</p>
                 <input type="number" name="user-comment-num" min="1" max="10" value="5">
-                <input type="submit" />
+                <input type="submit" onclick="getComments()" />
                 </form>
               </div>
           <div class="topic">

@@ -34,13 +34,26 @@ async function getContent() {
 }
 
 function getComments(){
-   fetch('/data').then(response => response.json()).then((comments) => {
+   //confirm((new URL(document.location)).searchParams);
+   fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
+       //need to have the ?user-comment-num in order to pass correct params
     console.log(comments);
     const messageBoard = document.getElementById('comments-container');
     comments.forEach((comment) => {
       messageBoard.appendChild(createCmtEl(comment));
     })    
   });
+}
+
+function getUserNum(){
+    //the current document's URL params
+    let searchParams = (new URL(document.location)).searchParams;
+    //that returns a map like structure, so we can get out desired param with .get()
+    let userNum = searchParams.get("user-comment-num");
+    if(userNum == null || userNum.length === 0){
+        return "1";
+    }
+    return userNum;
 }
 
 function createCmtEl(comment) {
