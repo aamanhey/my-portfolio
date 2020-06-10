@@ -82,11 +82,15 @@
                 <input type="number" name="user-comment-num" min="1" max="10" value="5">
                 <input type="submit" onclick="getComments()" />
                 </form>
+              <form mehtod="POST">
+                  <p>Would you like to burn the comment section to the ground?<p>
+                  <button type="submit" onclick="deleteAllComments()">Delete All Comments</button>
+                  </form>
               </div>
           <div class="topic">
             <h2>Add a Comment</h2>
             <form action="/data" method="POST">
-              <name-input name="name-input">Name</name-input>
+              <input name="name-input">Name</input>
               <textarea name="text-input">Comment</textarea>
               <br/><br/>
               <input type="submit" />  

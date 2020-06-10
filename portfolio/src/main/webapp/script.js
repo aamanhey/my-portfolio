@@ -33,15 +33,42 @@ async function getContent() {
   document.getElementById('message-container').innerText = message;
 }
 
-function getComments(){
-   //confirm((new URL(document.location)).searchParams);
-   fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
-       //need to have the ?user-comment-num in order to pass correct params
+function postComments(comments){
     console.log(comments);
     const messageBoard = document.getElementById('comments-container');
     comments.forEach((comment) => {
       messageBoard.appendChild(createCmtEl(comment));
-    })    
+    }) 
+}
+
+function deleteAllComments(){
+    fetch('/delete-data',{method:"POST"}).then(response => response.json()).then((emptyComments) => {
+        console.log(emptyComments);
+    });
+    getComments();
+}
+
+function deleteComment(){
+    fetch('/delete-data?comment-key='+getCommentKey()).then(response => response.json()).then((emptyComments) => {
+        console.log(emptyComments);
+    });
+    getComments();
+}
+
+function getCommentKey(){
+    let searchParams = (new URL(document.location)).searchParams;
+    let userNum = searchParams.get("comment-key");
+    if(commentkey == null || commentkey.length === 0){
+        return "1";
+    }
+    return commentkey;
+}
+
+function getComments(){
+   //confirm((new URL(document.location)).searchParams);
+   fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
+    //need to have the ?user-comment-num in order to pass correct params
+    postComments(comments);    
   });
 }
 
@@ -64,7 +91,8 @@ function createCmtEl(comment) {
   nameElem.innerText = comment.name;
 
   const txtElem = document.createElement('span');
-  txtElem.innerText = comment.text;
+  var str = comment.name +"commented: \n " + comment.text;
+  txtElem.innerText = str;
 
   comElem.appendChild(nameElem);
   comElem.appendChild(txtElem);

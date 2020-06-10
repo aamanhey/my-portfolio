@@ -33,7 +33,6 @@ import com.google.gson.Gson;
 /** Servlet that returns some example content. TODO: modify this file to handle comments data */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-    //ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -44,10 +43,8 @@ public class DataServlet extends HttpServlet {
     //equal string and check to see if it null
     //if null set equal to default
     String userNum = request.getParameter("user-comment-num");
-    int numberComments;
-    if (userNum == null){
-        numberComments = 5;
-    }else{
+    int numberComments = 5;
+    if (userNum != null) {
         numberComments = Integer.parseInt(userNum);
     }
     int numberLoaded = 0;
@@ -89,7 +86,6 @@ public class DataServlet extends HttpServlet {
     datastore.put(commentEntity);
 
     response.setContentType("text/html;");
-    //response.getWriter().println(comments);
     response.sendRedirect("/index.html");
   }
 
@@ -97,19 +93,4 @@ public class DataServlet extends HttpServlet {
         Gson gson = new Gson();
         return gson.toJson(messages);
     }
-
-  private String convertToJsonW(ArrayList<String> list){
-    String json = "['";
-    int i;
-    for(i=0;i<list.size();i++){
-      json += "{'Comment "+i+"' : '";
-      if(i == list.size() - 1){
-        json += list.get(i) + "}";
-      }else{
-        json += list.get(i) + "},";
-    }
-    }
-    json += "]";
-    return json;
-  }
 }
