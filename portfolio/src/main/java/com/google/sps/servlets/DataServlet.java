@@ -41,21 +41,30 @@ public class DataServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
+    int numberComments = Integer.parseInt(request.getParameter("user-comment-num"));
+    int numberLoaded = 0;
+
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for(Entity entity : results.asIterable()){
-      long id = entity.getKey().getId();
-      String name = (String) entity.getProperty("name");
-      String text = (String) entity.getProperty("text");
-      long timestamp = (long) entity.getProperty("timestamp");
+        if (numberLoaded <= numberComments){
+            long id = entity.getKey().getId();
+            String name = (String) entity.getProperty("name");
+            String text = (String) entity.getProperty("text");
+            long timestamp = (long) entity.getProperty("timestamp");
 
-      Comment comment = new Comment(id, name, text, timestamp);
-      comments.add(comment);
+            Comment comment = new Comment(id, name, text, timestamp);
+            comments.add(comment);
+        }else{
+            break;
+        }
     }
     
     String jsoncom = convertToJson(comments);
 
     response.setContentType("application/json;");
     response.getWriter().println(jsoncom);
+    response.sendRedirect("/index.html");
+
     }
   
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{

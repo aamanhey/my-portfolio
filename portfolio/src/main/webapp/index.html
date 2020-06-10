@@ -74,9 +74,17 @@
             <p>I am not just my heritage, I am a young man with a goal to have others understand who I am and surround myself with people who will support me and challenge me. Education is what is going to help me achieve understanding, but I believe it is through the process that I will gain the relationships and knowledge that will lead to creating the network of people I strive to be a part of. That’s why I was so excited to go to college: because one of the fundamental functions of college is to bring a many of these kinds of people together. It gives me the ability to actualize my aspirations.
               </p>
             </div>
+          <div class = "topic">
+              <h2>Comments</h2>
+              <div id = "comments-container"></div>
+              <form action="/data" method="GET">
+                <p>How many comments would you like to view?(1-10)</p>
+                <input type="number" name="user-comment-num" min="1" max="10" value="5">
+                <input type="submit" />
+                </form>
+              </div>
           <div class="topic">
-            <h2>Comments</h2>
-            <div id = "comments-container"></div>
+            <h2>Add a Comment</h2>
             <form action="/data" method="POST">
               <textarea name="name-input">Name</textarea>
               <textarea name="text-input">Comment</textarea>
