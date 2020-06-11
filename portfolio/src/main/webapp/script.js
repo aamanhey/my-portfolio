@@ -91,7 +91,7 @@ function createCmtEl(comment) {
   nameElem.innerText = comment.name;
 
   const txtElem = document.createElement('span');
-  var str = comment.name +"commented: \n " + comment.text;
+  var str = " commented: \n " + comment.text;
   txtElem.innerText = str;
 
   comElem.appendChild(nameElem);
