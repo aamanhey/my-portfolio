@@ -109,15 +109,16 @@ div.img_desc {
   /*width: 50%;*/
 }
 
-.leftcolumn {
+.midColumn {
     float: left;
-    width: 75%;
+    width: 50%;
 }
 
-.rightcolumn {
+.sideColumn {
     float: left;
     width: 25%;
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .row:after {
@@ -130,6 +131,11 @@ div.img_desc {
     background-color: whitesmoke;
     padding: 20px;
     margin-top:20px;
+}
+
+#profPic {
+  width: 100%;
+  height: auto;
 }
 
 /*makes the columns stack ontop instead of next to each other*/
