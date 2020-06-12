@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet deletes comments from datastore*/
 @WebServlet("/delete-data")
 public class DeleteServlet extends HttpServlet {
-    //ArrayList<String> comments = new ArrayList<String>();
 
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -27,7 +26,7 @@ public class DeleteServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    int numcomments;
+    int numComments;
     for(Entity entity : results.asIterable()){
         datastore.delete(entity.getKey());
     }
@@ -35,6 +34,5 @@ public class DeleteServlet extends HttpServlet {
 
     response.setContentType("application/json;");
     response.getWriter().println();
-    //response.sendRedirect("/index.html");
   }
 }

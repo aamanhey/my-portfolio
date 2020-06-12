@@ -30,13 +30,13 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns stores and retrieves comments from datastore. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
 
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp",SortDirection.DESCENDING);
+    Query query = new Query("Comment").addSort("timeStamp",SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
     
@@ -55,33 +55,33 @@ public class DataServlet extends HttpServlet {
             long id = entity.getKey().getId();
             String name = (String) entity.getProperty("name");
             String text = (String) entity.getProperty("text");
-            long timestamp = (long) entity.getProperty("timestamp");
+            long timeStamp = (long) entity.getProperty("timeStamp");
 
-            Comment comment = new Comment(id, name, text, timestamp);
+            Comment comment = new Comment(id, name, text, timeStamp);
             comments.add(comment);
-            numberLoaded += 1;
+            numberLoaded ++;
         }else{
             break;
         }
     }
     
-    String jsoncom = convertToJson(comments);
+    String jsonComments = convertToJson(comments);
 
     response.setContentType("application/json;");
-    response.getWriter().println(jsoncom);
+    response.getWriter().println(jsonComments);
     }
   
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
     String name = request.getParameter("name-input");
     String text = request.getParameter("text-input");
-    long timestamp = System.currentTimeMillis();
+    long timeStamp = System.currentTimeMillis();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
     Entity commentEntity = new Entity("Comment");
     commentEntity.setProperty("name",name);
     commentEntity.setProperty("text",text);
-    commentEntity.setProperty("timestamp",timestamp);
+    commentEntity.setProperty("timeStamp",timeStamp);
 
     datastore.put(commentEntity);
 

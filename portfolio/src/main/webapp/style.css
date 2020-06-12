@@ -69,28 +69,28 @@ p {
 }
 
 /*only work for the art section not the cooking one*/
-div.gallery {
+.gallery {
   margin: 1px;
   align-content: center;
-  width: 33%;
   float:left;
-  height: auto;
+  border: 3px solid #ccc;
 }
 
-div.gallery:hover {
-  border: 1px solid #777;
+.gallery img {
+    width: 100%;
+    height: auto;
+}
+.gallery:after{
+    content: "";
+    display: table;
+    clear: both;
 }
 
-
-div.gallery img {
-  width: 100%;
-  height: auto;
-  border: 5px solid #ccc;
-  align-content: center;
+h4 {
+    text-align: center;
 }
 
-
-div.img_desc {
+.img_desc {
   padding: 15px;
   text-align: center;
 }
@@ -131,11 +131,35 @@ div.img_desc {
     background-color: whitesmoke;
     padding: 20px;
     margin-top:20px;
+    overflow: auto;
 }
 
 #profPic {
   width: 100%;
   height: auto;
+}
+
+.button {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #fff;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+.button:hover {background-color: #3e8e41}
+
+.button:active {
+  background-color: #3e8e41;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
 }
 
 /*makes the columns stack ontop instead of next to each other*/

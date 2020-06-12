@@ -27,21 +27,14 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-async function getContent() {
-  const response = await fetch('/data');
-  const message = await response.text();
-  document.getElementById('message-container').innerText = message;
+function getContent() {
+    getPosts();
+    getComments();
 }
 
-function postComments(comments){
-    console.log(comments);
-    const messageBoard = document.getElementById('comments-container');
-    comments.forEach((comment) => {
-      messageBoard.appendChild(createCmtEl(comment));
-    }) 
-}
-
+/*comments functionality*/
 function deleteAllComments(){
+    confirm("Are you sure you want to delete all comments?");
     fetch('/delete-data',{method:"POST"}).then(response => response.json()).then((emptyComments) => {
         console.log(emptyComments);
     });
@@ -57,7 +50,7 @@ function deleteComment(){
 
 function getCommentKey(){
     let searchParams = (new URL(document.location)).searchParams;
-    let userNum = searchParams.get("comment-key");
+    let commentkey = searchParams.get("comment-key");
     if(commentkey == null || commentkey.length === 0){
         return "1";
     }
@@ -68,8 +61,11 @@ function getComments(){
    //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
-    postComments(comments);    
-  });
+    console.log(comments);
+    const messageBoard = document.getElementById('comments-container');
+    comments.forEach((comment) => {
+      messageBoard.appendChild(createCmtEl(comment));
+    })   });
 }
 
 function getUserNum(){
@@ -97,4 +93,79 @@ function createCmtEl(comment) {
   comElem.appendChild(nameElem);
   comElem.appendChild(txtElem);
   return comElem;
+}
+
+/* Post functionality */
+function getPostKey(){
+    let searchParams = (new URL(document.location)).searchParams;
+    let userNum = searchParams.get("post-key");
+    if(postkey == null || postkey.length === 0){
+        return "1";
+    }
+    return postkey;
+}
+
+function getPosts(){
+   //confirm((new URL(document.location)).searchParams);
+   fetch('/post-data').then(response => response.json()).then((posts) => {
+    //need to have the ?user-comment-num in order to pass correct params
+    console.log(posts);
+    const messageBoard = document.getElementById('posts-container');
+    posts.forEach((post) => {
+      messageBoard.appendChild(createPostEl(post));
+    })   });
+}
+
+function createPostEl(post) {
+  const postElem = document.createElement('li');
+  postElem.className = 'Post';
+
+  const nameElem = document.createElement('span');
+  nameElem.innerText = post.name;
+
+  const imgElem = document.createElement('span');
+  imgElem.innerText = post.imgfile;
+
+  const txtElem = document.createElement('span');
+  var str = " posted: \n " + post.text;
+  txtElem.innerText = str;
+
+  postElem.appendChild(nameElem);
+  postElem.appendChild(imgElem);
+  postElem.appendChild(txtElem);
+  return postElem;
+}
+
+function uploadPost() {
+    var bucket = "adrian_posts_bucket";
+    //forms returns an HTML collection listing all the <form> elements contained in the doc
+    //HTML collection is a generic collection (array-like object similar to arguments) of elements
+    
+    //TODO: create fileID var fileID = getFileID();
+    
+    var userName = document.forms["putPost"]["name-input"].value;
+    var img = document.forms["putPost"]["img-input"].value;
+    //documnet.forms[name of the form][name of item in form]
+    //organized like a matrix
+
+    if (userName == null || userName == "" || text == null || text == "") {
+        alert("Both Name and Text are required");
+        return false;
+    } else {
+        var postData = document.forms["putPost"]["text-input"].value;
+        document.getElementById("text-input").value = null;
+
+        var request = new XMLHttpRequest();
+        request.open("POST", "/uspost?bucket=" + bucket, false);
+        //request.open(method, url[, async[, user[, password]]])
+        //[optional] async is a boolean parameter defaulting to true asking if the operation should be done asynchronously
+        //[optional] user is the username and password is the password, both used for auth purposes
+        request.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
+        request.send(postData);
+    }
+}
+
+function takeALook(){
+    var img = document.forms["putPost"]["img-input"].value;
+    confirm(document.getElementById("img-input").files[0].fileName);
 }
