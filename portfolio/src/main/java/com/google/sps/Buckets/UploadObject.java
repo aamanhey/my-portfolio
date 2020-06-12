@@ -22,9 +22,11 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import com.google.sps.data.Post;
@@ -73,6 +75,7 @@ public class UploadObject extends HttpServlet {
     //the are only available as form data parts by request.getPart()
     String name = request.getParameter("name-input");
     String imgFilePath = request.getParameter("img-input");
+    //image file path as DOM string
 
     String text = request.getParameter("text-input");
     long timeStamp = System.currentTimeMillis();
@@ -87,10 +90,37 @@ public class UploadObject extends HttpServlet {
     String objectName = createFileName();
 
     Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+    //The Storage class creates an instance to interface the Google Cloud Storage
+    //
     BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
     System.out.println("This is the filepath: "+imgFilePath);
-    storage.create(blobInfo, Files.readAllBytes(Paths.get(imgFilePath)));
+    if (isGoodFile(imgFilePath)){
+        storage.create(blobInfo, Files.readAllBytes(Paths.get(imgFilePath)));
+    }else{
+        throw new FileNotFoundException();
+    }
+    /* ellipsis identifies a variable number of arguments
+        
+    The Files class consists exclusively of static methods that operate on files, directories, or other types of files.
+        readAllBytes takes in a Path as a param and returns a byte array
+        readAllBytes will throws an IOException if an I/O error occurs reading from the stream or an OutOfMemoryError if an array of the required size cannot be allocated
+    
+    Path is an object that may be used to locate a file in a file system. It will typically represent a system dependent file path. !!Different from Paths class
+        Paths.get converts a path string to a Path
+        
+        
+    Storage create method has two applicable variations:
+        Creates a new blob with the sub array of the given byte array.
+            create(BlobInfo blobInfo, byte[] content, int offset, int length, Storage.BlobTargetOption... options)
+        Creates a new blob.
+            create(BlobInfo blobInfo, byte[] content, Storage.BlobTargetOption... options)
+
+    the BlobInfo is an object that holds information about an object in Google Cloud Storage
+        -includes BlobId instance and the set of properties (e.g. blob's access control configuration, user provided metadata, etc.) 
+        -Instances of this class are used to create a new object in Google Cloud Storage or update the properties of an existing object
+    
+    */
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     Entity newPost = new Entity("Post");
@@ -107,6 +137,15 @@ public class UploadObject extends HttpServlet {
     
     response.setContentType("text/html;");
     response.sendRedirect("/index.html");
+  }
+
+  private boolean isGoodFile(String imgFilePath){
+    if(Paths.get(imgFilePath) instanceof Path && Files.isReadable(Paths.get(imgFilePath))){
+        if(Paths.get(imgFilePath).toString()==imgFilePath){
+            return true;
+        }
+    }
+    return false;
   }
 
     private String createFileName(){
