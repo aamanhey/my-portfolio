@@ -43,21 +43,30 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/form-handler")
 public class BlobFormHandlerServlet extends HttpServlet {
+    private static final String NAME_PARAM_NAME = "name-input";
+    private static final String TEXT_PARAM_NAME = "text-input";
+    private static final String IMAGE_PARAM_NAME = "img-input";
+    private static final String ENTITY_KIND = "Post";
+    private static final String NAME_PROPERTY_NAME = "name";
+    private static final String TEXT_PROPERTY_NAME = "text";
+    private static final String IMGURL_PROPERTY_NAME = "imageUrl";
+    private static final String TIMESTAMP_PROPERTY_NAME = "timeStamp";
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String name = request.getParameter("name-input");
-    String message = request.getParameter("text-input");
-    String imageUrl = getUploadedFileUrl(request, "img-input");
+    String name = request.getParameter(NAME_PARAM_NAME);
+    String message = request.getParameter(TEXT_PARAM_NAME);
+    String imageUrl = getUploadedFileUrl(request, IMAGE_PARAM_NAME);
     long timeStamp = System.currentTimeMillis();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Entity postEntity = new Entity("Post");
+    Entity postEntity = new Entity(ENTITY_KIND);
 
-    postEntity.setProperty("name", name);
-    postEntity.setProperty("text", message);
-    postEntity.setProperty("imageUrl", imageUrl);
-    postEntity.setProperty("timeStamp", timeStamp);
+    postEntity.setProperty(NAME_PROPERTY_NAME, name);
+    postEntity.setProperty(TEXT_PROPERTY_NAME, message);
+    postEntity.setProperty(IMGURL_PROPERTY_NAME, imageUrl);
+    postEntity.setProperty(TIMESTAMP_PROPERTY_NAME, timeStamp);
 
     datastore.put(postEntity);
 
@@ -69,7 +78,7 @@ public class BlobFormHandlerServlet extends HttpServlet {
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-    List<BlobKey> blobKeys = blobs.get("img-input");
+    List<BlobKey> blobKeys = blobs.get(IMAGE_PARAM_NAME);
 
     // no file selected (dev)
     if (blobKeys == null || blobKeys.isEmpty()) {
