@@ -123,8 +123,8 @@ function createPostEl(post) {
   const nameElem = document.createElement('span');
   nameElem.innerText = post.name;
 
-  const imgElem = document.createElement('span');
-  imgElem.innerText = post.imgfile;
+  const imgElem = document.createElement('img');
+  imgElem.src = post.imgUrl;
 
   const txtElem = document.createElement('span');
   var str = " posted: \n " + post.text;
@@ -166,6 +166,6 @@ function uploadPost() {
 }
 
 function takeALook(){
-    var img = document.forms["putPost"]["img-input"].value;
-    confirm(document.getElementById("img-input").files[0].fileName);
+    var img = document.forms["putPost"]["img-input-file"].value;
+    confirm(document.getElementById("img-input"));
 }

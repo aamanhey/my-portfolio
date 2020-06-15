@@ -55,12 +55,18 @@ public class UploadObject extends HttpServlet {
         String name = (String) entity.getProperty("name");
         String text = (String) entity.getProperty("text");
         long timeStamp = (long) entity.getProperty("timeStamp");
-        String bucketName = (String) entity.getProperty("bucketName");
-        String objectName = (String) entity.getProperty("objectName");
-        BlobId imgObjId = (BlobId) entity.getProperty("imgObjId");
-        Blob imgFile = (Blob)  storage.get(BlobId.of(bucketName, objectName));
-
-        Post post = new Post(id, name, text, timeStamp, bucketName, objectName, imgObjId, imgFile);
+        //String imgUrl = (String) entity.getProperty("imgUrl");
+        //Post post = new Post(id, name, text, timeStamp, bucketName, objectName, blobId, imgFile);
+        // if(imgUrl == null){
+            String bucketName = (String) entity.getProperty("bucketName");
+            String objectName = (String) entity.getProperty("objectName");
+            BlobId blobId = (BlobId) entity.getProperty("imgObjId");
+            Blob imgFile = (Blob)  storage.get(BlobId.of(bucketName, objectName));
+        //     post = new Post(id, name, text, timeStamp, bucketName, objectName, blobId, imgFile);
+        // }else{
+        //     post = new Post(id, name, text, timeStamp, imgUrl);
+        // }
+        Post post = new Post(id, name, text, timeStamp, bucketName, objectName, blobId, imgFile);
         posts.add(post);
     }
     
@@ -74,32 +80,48 @@ public class UploadObject extends HttpServlet {
     //when using multipart/form-data requests te form data pars are not availabe as request params
     //the are only available as form data parts by request.getPart()
     String name = request.getParameter("name-input");
-    String imgFilePath = request.getParameter("img-input");
-    //image file path as DOM string
-
+    String imgFilePath = request.getParameter("img-input-file");
+    String imgUrl = request.getParameter("img-input-url");
     String text = request.getParameter("text-input");
     long timeStamp = System.currentTimeMillis();
     
-    // The ID of your GCP project
-    String projectId = "amanhey-step-2020";
-
-    // The ID of your GCS bucket
-    String bucketName = "adrian_posts_bucket";
-
-    // The ID of your GCS object
-    String objectName = createFileName();
-
-    Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-    //The Storage class creates an instance to interface the Google Cloud Storage
-    //
-    BlobId blobId = BlobId.of(bucketName, objectName);
-    BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
-    System.out.println("This is the filepath: "+imgFilePath);
-    if (isGoodFile(imgFilePath)){
-        storage.create(blobInfo, Files.readAllBytes(Paths.get(imgFilePath)));
-    }else{
-        throw new FileNotFoundException();
+    boolean useStorageBucket = false;
+    if(imgUrl == null){
+        useStorageBucket = true;
     }
+
+    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+    Entity newPost = new Entity("Post");
+    newPost.setProperty("name",name);
+    newPost.setProperty("text",text);
+    newPost.setProperty("time-stamp",timeStamp);
+    //if(useStorageBucket){
+        // The ID of your GCP project
+        String projectId = "amanhey-step-2020";
+
+        // The ID of your GCS bucket
+        String bucketName = "adrian_posts_bucket";
+
+        // The ID of your GCS object
+        String objectName = createFileName();
+
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        //The Storage class creates an instance to interface the Google Cloud Storage
+        //
+        BlobId blobId = BlobId.of(bucketName, objectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/png").build();
+        System.out.println("This is the filepath: "+imgFilePath);
+        if (isGoodFile(imgFilePath)){
+            storage.create(blobInfo, Files.readAllBytes(Paths.get(imgFilePath)));
+        }else{
+            throw new FileNotFoundException();
+        }
+        newPost.setProperty("bucketName",bucketName);
+        newPost.setProperty("imgObjName",objectName);
+        newPost.setProperty("imgObjId",blobId);
+    //}else{
+        newPost.setProperty("imgUrl",imgUrl);
+    //}
     /* ellipsis identifies a variable number of arguments
         
     The Files class consists exclusively of static methods that operate on files, directories, or other types of files.
@@ -121,19 +143,7 @@ public class UploadObject extends HttpServlet {
         -Instances of this class are used to create a new object in Google Cloud Storage or update the properties of an existing object
     
     */
-
-    DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-    Entity newPost = new Entity("Post");
-    newPost.setProperty("name",name);
-    newPost.setProperty("text",text);
-    newPost.setProperty("time-stamp",timeStamp);
-    newPost.setProperty("bucketName",bucketName);
-    newPost.setProperty("imgObjName",objectName);
-    newPost.setProperty("imgObjId",blobId);
     datastore.put(newPost);
-
-    System.out.println(
-    "You uploaded " + objectName + " to bucket " + bucketName + ".");
     
     response.setContentType("text/html;");
     response.sendRedirect("/index.html");
