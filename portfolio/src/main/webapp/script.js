@@ -135,37 +135,3 @@ function createPostEl(post) {
   postElem.appendChild(txtElem);
   return postElem;
 }
-
-function uploadPost() {
-    var bucket = "adrian_posts_bucket";
-    //forms returns an HTML collection listing all the <form> elements contained in the doc
-    //HTML collection is a generic collection (array-like object similar to arguments) of elements
-    
-    //TODO: create fileID var fileID = getFileID();
-    
-    var userName = document.forms["putPost"]["name-input"].value;
-    var img = document.forms["putPost"]["img-input"].value;
-    //documnet.forms[name of the form][name of item in form]
-    //organized like a matrix
-
-    if (userName == null || userName == "" || text == null || text == "") {
-        alert("Both Name and Text are required");
-        return false;
-    } else {
-        var postData = document.forms["putPost"]["text-input"].value;
-        document.getElementById("text-input").value = null;
-
-        var request = new XMLHttpRequest();
-        request.open("POST", "/uspost?bucket=" + bucket, false);
-        //request.open(method, url[, async[, user[, password]]])
-        //[optional] async is a boolean parameter defaulting to true asking if the operation should be done asynchronously
-        //[optional] user is the username and password is the password, both used for auth purposes
-        request.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-        request.send(postData);
-    }
-}
-
-function takeALook(){
-    var img = document.forms["putPost"]["img-input-file"].value;
-    confirm(document.getElementById("img-input"));
-}
