@@ -28,6 +28,7 @@ function addRandomGreeting() {
 }
 
 function getContent() {
+    fetchBlob();
     getPosts();
     getComments();
 }
@@ -61,7 +62,7 @@ function getComments(){
    //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
-    console.log(comments);
+    console.log("the comments: " + comments);
     const messageBoard = document.getElementById('comments-container');
     comments.forEach((comment) => {
       messageBoard.appendChild(createCmtEl(comment));
@@ -107,31 +108,56 @@ function getPostKey(){
 
 function getPosts(){
    //confirm((new URL(document.location)).searchParams);
-   fetch('/post-data').then(response => response.json()).then((posts) => {
-    //need to have the ?user-comment-num in order to pass correct params
-    console.log(posts);
+   fetch('/get-posts').then(response => response.json()).then((posts) => {
+    console.log("the posts: " + posts);
     const messageBoard = document.getElementById('posts-container');
     posts.forEach((post) => {
-      messageBoard.appendChild(createPostEl(post));
+      messageBoard.appendChild(createCustomPostEl(post));
     })   });
+    //location.href = '/index.html';
 }
 
-function createPostEl(post) {
-  const postElem = document.createElement('li');
+function fetchBlob() {
+  fetch('/blobstore-upload-url').then((response) => {return response.text();}).then((imageUploadUrl) => {
+      const messageForm = document.getElementById('createPost');//this sets the action
+      messageForm.action = imageUploadUrl;//of the form to the blobstore url
+      });
+}
+
+function createCustomPostEl(post) {
+  const postElem = document.createElement('ul');
   postElem.className = 'Post';
 
+  const section = document.createElement('div');
+  section.className = 'topic';
+  section.style.border = "1px dotted black";
+
+  const profileHandler = document.createElement('div');
   const nameElem = document.createElement('span');
   nameElem.innerText = post.name;
-
-  const imgElem = document.createElement('img');
-  imgElem.src = post.imgUrl;
-
+  nameElem.style.fontSize = "20px";
+  profileHandler.appendChild(nameElem);
+  
+  const textHandler = document.createElement('div');
   const txtElem = document.createElement('span');
   var str = " posted: \n " + post.text;
   txtElem.innerText = str;
+  txtElem.style.fontSize = "16px";
+  textHandler.appendChild(txtElem);
 
-  postElem.appendChild(nameElem);
-  postElem.appendChild(imgElem);
-  postElem.appendChild(txtElem);
-  return postElem;
+  
+  const imageHandler = document.createElement('div');
+  const imgElem = document.createElement('img');
+  imgElem.src = post.imgUrl;
+  imgElem.style.width = "25%";
+  imgElem.style.height= "auto";
+  imageHandler.appendChild(imgElem);
+
+  postElem.appendChild(profileHandler);
+  postElem.appendChild(textHandler);
+  postElem.appendChild(imageHandler);
+
+  section.appendChild(postElem);
+  return section;
 }
+

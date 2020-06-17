@@ -47,8 +47,10 @@ public class BlobFormHandlerServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name-input");
     String message = request.getParameter("text-input");
+    System.out.println("Request:img-input = "+request+":"+request.getParameter("img-input"));
     String imageUrl = getUploadedFileUrl(request, "img-input");
     long timeStamp = System.currentTimeMillis();
+    System.out.println("Image blobstore url: "+imageUrl);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -62,7 +64,7 @@ public class BlobFormHandlerServlet extends HttpServlet {
     datastore.put(postEntity);
 
     response.setContentType("text/html;");
-    response.sendRedirect("/index.html");
+    response.sendRedirect("/upload.html");
   }
 
   /** Returns a URL that points to the uploaded file, or null if the user didn't upload a file. */
@@ -70,6 +72,7 @@ public class BlobFormHandlerServlet extends HttpServlet {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("img-input");
+    System.out.println("blob keys: "+blobKeys);
 
     // no file selected (dev)
     if (blobKeys == null || blobKeys.isEmpty()) {
@@ -84,9 +87,6 @@ public class BlobFormHandlerServlet extends HttpServlet {
       blobstoreService.delete(blobKey);
       return null;
     }
-
-    // We could check the validity of the file here, e.g. to make sure it's an image file
-    // https://stackoverflow.com/q/10779564/873165
 
     // Use ImagesService to get a URL that points to the uploaded file.
     ImagesService imagesService = ImagesServiceFactory.getImagesService();

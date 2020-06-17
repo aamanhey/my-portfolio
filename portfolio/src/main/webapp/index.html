@@ -83,19 +83,7 @@
               <h2>Posts</h2>
               <div id = "posts-container"></div>
               </div>
-            <div class="topic">
-              <h2>Create A Post!</h2>
-              <form method="POST" enctype="multipart/form-data" name="creatPost" id="creatPost">
-                <p>Name</p>
-                <input name="name-input" />
-                <p>Add an image</p>
-                <input name="img-input" type="file" value="Upload an Image"/>
-                <p>Description</p>
-                <textarea name="text-input">Type here!</textarea>
-                <br />
-                <input type="submit" value="Upload"/>  
-              </form>
-              </div>
+              <button onclick="location.href = '/upload.html';" id="createPostButton" formaction="/upload.html">Add a comment</button>
           </div>
         <div class="sideColumn">
           <div class = "topic">
