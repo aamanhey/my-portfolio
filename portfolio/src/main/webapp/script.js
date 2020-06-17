@@ -28,7 +28,7 @@ function addRandomGreeting() {
 }
 
 function getContent() {
-    fetchBlob();
+    fetchBlob();//make sure the Blobstore url is embedded first
     getPosts();
     getComments();
 }
@@ -37,14 +37,12 @@ function getContent() {
 function deleteAllComments(){
     confirm("Are you sure you want to delete all comments?");
     fetch('/delete-data',{method:"POST"}).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
 
 function deleteComment(){
     fetch('/delete-data?comment-key='+getCommentKey()).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
@@ -62,7 +60,6 @@ function getComments(){
    //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
-    console.log("the comments: " + comments);
     const messageBoard = document.getElementById('comments-container');
     comments.forEach((comment) => {
       messageBoard.appendChild(createCmtEl(comment));
@@ -118,6 +115,7 @@ function getPosts(){
 }
 
 function fetchBlob() {
+    ///blobstore-upload-url
   fetch('/blobstore-upload-url').then((response) => {return response.text();}).then((imageUploadUrl) => {
       const messageForm = document.getElementById('createPost');//this sets the action
       messageForm.action = imageUploadUrl;//of the form to the blobstore url
