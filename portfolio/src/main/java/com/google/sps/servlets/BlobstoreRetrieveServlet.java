@@ -39,13 +39,7 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    // equal string and check to see if it null
-    // if null set equal to default
-    //String userNum = request.getParameter("user-Post-num");
     int numberPosts = 5;
-    // if (userNum != null) {
-    //   numberPosts = Integer.parseInt(userNum);
-    // }
     int numberLoaded = 0;
 
     ArrayList<Post> posts = new ArrayList<Post>();
@@ -70,7 +64,6 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
     String jsonPosts = convertToJson(posts);
 
     response.setContentType("application/json;");
-    System.out.println("Outputting the json");
     response.getWriter().println(jsonPosts);
   }
 
