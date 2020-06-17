@@ -47,10 +47,8 @@ public class BlobFormHandlerServlet extends HttpServlet {
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
     String name = request.getParameter("name-input");
     String message = request.getParameter("text-input");
-    System.out.println("Request:img-input = "+request+":"+request.getParameter("img-input"));
     String imageUrl = getUploadedFileUrl(request, "img-input");
     long timeStamp = System.currentTimeMillis();
-    System.out.println("Image blobstore url: "+imageUrl);
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -72,33 +70,42 @@ public class BlobFormHandlerServlet extends HttpServlet {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
     List<BlobKey> blobKeys = blobs.get("img-input");
-    System.out.println("blob keys: "+blobKeys);
 
-    // no file selected (dev)
-    if (blobKeys == null || blobKeys.isEmpty()) {
-      return null;
-    }
+    boolean useImageService = false;
 
-    BlobKey blobKey = blobKeys.get(0); // single file -> get first value
+    if(useImageService){
+        // no file selected (dev)
+        if (blobKeys == null || blobKeys.isEmpty()) {
+        return null;
+        }
 
-    // User submitted form without selecting a file, so we can't get a URL. (live server)
-    BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
-    if (blobInfo.getSize() == 0) {
-      blobstoreService.delete(blobKey);
-      return null;
-    }
+        BlobKey blobKey = blobKeys.get(0); // single file -> get first value
 
-    // Use ImagesService to get a URL that points to the uploaded file.
-    ImagesService imagesService = ImagesServiceFactory.getImagesService();
-    ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
+        // User submitted form without selecting a file, so we can't get a URL. (live server)
+        BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
+        if (blobInfo.getSize() == 0) {
+        blobstoreService.delete(blobKey);
+        return null;
+        }
 
-    // To support running in Google Cloud Shell with AppEngine's devserver, we must use the relative
-    // path to the image, rather than the path returned by imagesService which contains a host.
-    try {
-      URL url = new URL(imagesService.getServingUrl(options));
-      return url.getPath();
-    } catch (MalformedURLException e) {
-      return imagesService.getServingUrl(options);
+        // Use ImagesService to get a URL that points to the uploaded file.
+        ImagesService imagesService = ImagesServiceFactory.getImagesService();
+        ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
+
+        // To support running in Google Cloud Shell with AppEngine's devserver, we must use the relative
+        // path to the image, rather than the path returned by imagesService which contains a host.
+        try {
+        URL url = new URL(imagesService.getServingUrl(options));
+        return url.getPath();
+        } catch (MalformedURLException e) {
+        return imagesService.getServingUrl(options);
+        }
+    }else{
+        if (blobKeys == null || blobKeys.isEmpty()) {
+            res.sendRedirect("/");
+        } else {
+            res.sendRedirect("/serve?blob-key=" + blobKeys.get(0).getKeyString());
+        }
     }
   }
 }
