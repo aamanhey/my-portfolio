@@ -21,7 +21,13 @@ public class Greeter {
   /**
    * Returns a greeting for the given name.
    */
+  //private static final String[] invalidArray = new String[] {' ','@','#','$','%'};
+  private static final String[] invalidArray = {" ","@","#","$","%"};
+  
   public String greet(String name) {
+    for(String c: invalidArray){
+        name = name.replaceAll(c,"");
+    }
     return "Hello " + name;
   }
 }
