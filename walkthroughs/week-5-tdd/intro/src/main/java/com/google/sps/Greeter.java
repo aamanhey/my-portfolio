@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+ 
 package com.google.sps;
-
+ 
 /**
  * Utility class for creating greeting messages.
  */
@@ -21,7 +21,13 @@ public class Greeter {
   /**
    * Returns a greeting for the given name.
    */
+  //private static final String[] invalidArray = new String[] {' ','@','#','$','%'};
+  private static final String[] invalidArray = {" ","@","#","$","%"};
+  
   public String greet(String name) {
+    for(String c: invalidArray){
+        name = name.replaceAll(c,"");
+    }
     return "Hello " + name;
   }
 }
