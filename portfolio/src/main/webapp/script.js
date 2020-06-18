@@ -27,37 +27,29 @@ function addRandomGreeting() {
   greetingContainer.innerText = greeting;
 }
 
-async function getContent() {
-  const response = await fetch('/data');
-  const message = await response.text();
-  document.getElementById('message-container').innerText = message;
+function getContent() {
+    fetchBlob();//make sure the Blobstore url is embedded first
+    getPosts();
+    getComments();
 }
 
-function postComments(comments){
-    console.log(comments);
-    const messageBoard = document.getElementById('comments-container');
-    comments.forEach((comment) => {
-      messageBoard.appendChild(createCmtEl(comment));
-    }) 
-}
-
+/*comments functionality*/
 function deleteAllComments(){
+    confirm("Are you sure you want to delete all comments?");
     fetch('/delete-data',{method:"POST"}).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
 
 function deleteComment(){
     fetch('/delete-data?comment-key='+getCommentKey()).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
 
 function getCommentKey(){
     let searchParams = (new URL(document.location)).searchParams;
-    let userNum = searchParams.get("comment-key");
+    let commentkey = searchParams.get("comment-key");
     if(commentkey == null || commentkey.length === 0){
         return "1";
     }
@@ -68,8 +60,10 @@ function getComments(){
    //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
-    postComments(comments);    
-  });
+    const messageBoard = document.getElementById('comments-container');
+    comments.forEach((comment) => {
+      messageBoard.appendChild(createCmtEl(comment));
+    })   });
 }
 
 function getUserNum(){
@@ -98,3 +92,70 @@ function createCmtEl(comment) {
   comElem.appendChild(txtElem);
   return comElem;
 }
+
+/* Post functionality */
+function getPostKey(){
+    let searchParams = (new URL(document.location)).searchParams;
+    let userNum = searchParams.get("post-key");
+    if(postkey == null || postkey.length === 0){
+        return "1";
+    }
+    return postkey;
+}
+
+function getPosts(){
+   //confirm((new URL(document.location)).searchParams);
+   fetch('/get-posts').then(response => response.json()).then((posts) => {
+    console.log("the posts: " + posts);
+    const messageBoard = document.getElementById('posts-container');
+    posts.forEach((post) => {
+      messageBoard.appendChild(createCustomPostEl(post));
+    })   });
+    //location.href = '/index.html';
+}
+
+function fetchBlob() {
+    ///blobstore-upload-url
+  fetch('/blobstore-upload-url').then((response) => {return response.text();}).then((imageUploadUrl) => {
+      const messageForm = document.getElementById('createPost');//this sets the action
+      messageForm.action = imageUploadUrl;//of the form to the blobstore url
+      });
+}
+
+function createCustomPostEl(post) {
+  const postElem = document.createElement('ul');
+  postElem.className = 'Post';
+
+  const section = document.createElement('div');
+  section.className = 'topic';
+  section.style.border = "1px dotted black";
+
+  const profileHandler = document.createElement('div');
+  const nameElem = document.createElement('span');
+  nameElem.innerText = post.name;
+  nameElem.style.fontSize = "20px";
+  profileHandler.appendChild(nameElem);
+  
+  const textHandler = document.createElement('div');
+  const txtElem = document.createElement('span');
+  var str = " posted: \n " + post.text;
+  txtElem.innerText = str;
+  txtElem.style.fontSize = "16px";
+  textHandler.appendChild(txtElem);
+
+  
+  const imageHandler = document.createElement('div');
+  const imgElem = document.createElement('img');
+  imgElem.src = post.imgUrl;
+  imgElem.style.width = "25%";
+  imgElem.style.height= "auto";
+  imageHandler.appendChild(imgElem);
+
+  postElem.appendChild(profileHandler);
+  postElem.appendChild(textHandler);
+  postElem.appendChild(imageHandler);
+
+  section.appendChild(postElem);
+  return section;
+}
+
