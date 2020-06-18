@@ -21,10 +21,15 @@ public class Greeter {
   /**
    * Returns a greeting for the given name.
    */
-  //private static final String[] invalidArray = new String[] {' ','@','#','$','%'};
-  private static final String[] invalidArray = {" ","@","#","$","%"};
-  
+  //default trimmer 
   public String greet(String name) {
+    return "Hello " + name.trim().replaceAll("[@#$%!? ]","");
+  }
+
+  //custom trimmer
+  private static final String[] invalidArray = {" ","@","%","!"};
+  
+  public String greetFromSpecificList(String name) {
     for(String c: invalidArray){
         name = name.replaceAll(c,"");
     }
