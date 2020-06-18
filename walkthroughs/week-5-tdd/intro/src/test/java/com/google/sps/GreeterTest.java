@@ -56,3 +56,4 @@ public final class GreeterTest {
     Assert.assertEquals("Hello #Ada", greeting);
   }
 }
+
