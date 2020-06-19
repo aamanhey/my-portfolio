@@ -11,13 +11,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+ 
 package com.google.sps;
-
+ 
 import java.util.Collection;
-
+ 
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
     throw new UnsupportedOperationException("TODO: Implement this method.");
+    //method 1: start with the full day and substract time for each event
+        //start with the mandatory attendees - save as option 1
+        //for each optional attendee you can substract time
+        //want to maximize the number of people invited so will have to try different combinations
+        //start with person with least events
+        //get events for each person
   }
 }
+ 
+
