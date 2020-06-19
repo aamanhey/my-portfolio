@@ -33,7 +33,6 @@
 // import com.google.appengine.api.blobstore.BlobstoreService;
 // import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
-
 // import javax.servlet.ServletException;
 // import javax.servlet.annotation.WebServlet;
 // import javax.servlet.http.HttpServlet;
@@ -49,14 +48,14 @@
 // import com.google.sps.data.Comment;
 // import com.google.gson.Gson;
 
-
 // /** Servlet that uploads and serves posts from blobstore */
 // @WebServlet("/uspost")
 // public class USPostServlet extends HttpServlet {
 //   private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
 // //   @Override
-// //   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+// //   public void doGet(HttpServletRequest request, HttpServletResponse response) throws
+// IOException {
 // //     GcsFilename fileName = getFileName(req);
 // //     if (SERVE_USING_BLOBSTORE_API) {//given by magic (from js)
 // //         BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
@@ -64,28 +63,33 @@
 // //             "/gs/" + fileName.getBucketName() + "/" + fileName.getObjectName());
 // //         blobstoreService.serve(blobKey, resp);
 // //     } else {
-// //       GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0, BUFFER_SIZE);
+// //       GcsInputChannel readChannel = gcsService.openPrefetchingReadChannel(fileName, 0,
+// BUFFER_SIZE);
 // //       copy(Channels.newInputStream(readChannel), resp.getOutputStream());
 // //     }
-// //     //prefetching buffers data in memory and prefetches it before it is required to avoid blocking on the read call
+// //     //prefetching buffers data in memory and prefetches it before it is required to avoid
+// blocking on the read call
 // //     }
 
 //   @Override
-//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+//   public void doPost(HttpServletRequest request, HttpServletResponse response) throws
+//   ServletException, IOException{
 //     GcsFileOptions instance = GcsFileOptions.getDefaultInstance();
 //     GcsFilename fileName = new GcsFilename(createFileName());
 //     GcsOutputChannel outputChannel;
-//     outputChannel = gcsService.createOrReplace(fileName, instance); //writes new file in cloud storage or overwrites if already exists
-//     copy(req.getInputStream(), Channels.newOutputStream(outputChannel));
+//     outputChannel = gcsService.createOrReplace(fileName, instance); //writes new file in cloud
+//     storage or overwrites if already exists copy(req.getInputStream(),
+//     Channels.newOutputStream(outputChannel));
 //   }
 
 //   private String createFileName(){
 //     //returns key specificate to the file, different from datastore key
 //     //datastore stores all the keys as one arrayList
-//     //DOWNSIDE - If the arrayList is deleted then cannot guarentee unique keys, will need to go through files and create new one
-//     Query query = new Query("FileKeys").addSort("timestamp",SortDirection.DESCENDING);
-//     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-//     PreparedQuery results = datastore.prepare(query);
+//     //DOWNSIDE - If the arrayList is deleted then cannot guarentee unique keys, will need to go
+//     through files and create new one Query query = new
+//     Query("FileKeys").addSort("timestamp",SortDirection.DESCENDING); DatastoreService datastore =
+//     DatastoreServiceFactory.getDatastoreService(); PreparedQuery results =
+//     datastore.prepare(query);
 
 //     Entity file_keys_list = results.asSingleEntity();
 

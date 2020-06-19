@@ -23,19 +23,12 @@ public class CreateBucket {
     // http://g.co/cloud/storage/docs/bucket-locations#location-mr
     String location = "asia";
 
-    Bucket bucket =
-        storage.create(
-            BucketInfo.newBuilder(bucketName)
-                .setStorageClass(storageClass)
-                .setLocation(location)
-                .build());
+    Bucket bucket = storage.create(BucketInfo.newBuilder(bucketName)
+                                       .setStorageClass(storageClass)
+                                       .setLocation(location)
+                                       .build());
 
-    System.out.println(
-        "Created bucket "
-            + bucket.getName()
-            + " in "
-            + bucket.getLocation()
-            + " with storage class "
-            + bucket.getStorageClass());
+    System.out.println("Created bucket " + bucket.getName() + " in " + bucket.getLocation()
+        + " with storage class " + bucket.getStorageClass());
   }
 }

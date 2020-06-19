@@ -168,3 +168,12 @@ h4 {
     width: 100%;
   }
 }
+
+#createPostButton {
+    alignment: center;
+    width: 200px;
+    height: 100px;
+    font-size: 18px;
+    margin: 15px;
+    margin-left: 40%;
+}

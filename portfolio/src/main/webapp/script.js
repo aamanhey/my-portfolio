@@ -28,6 +28,7 @@ function addRandomGreeting() {
 }
 
 function getContent() {
+    fetchBlob();
     getPosts();
     getComments();
 }
@@ -36,14 +37,12 @@ function getContent() {
 function deleteAllComments(){
     confirm("Are you sure you want to delete all comments?");
     fetch('/delete-data',{method:"POST"}).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
 
 function deleteComment(){
     fetch('/delete-data?comment-key='+getCommentKey()).then(response => response.json()).then((emptyComments) => {
-        console.log(emptyComments);
     });
     getComments();
 }
@@ -61,7 +60,6 @@ function getComments(){
    //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
-    console.log(comments);
     const messageBoard = document.getElementById('comments-container');
     comments.forEach((comment) => {
       messageBoard.appendChild(createCmtEl(comment));
@@ -107,65 +105,55 @@ function getPostKey(){
 
 function getPosts(){
    //confirm((new URL(document.location)).searchParams);
-   fetch('/post-data').then(response => response.json()).then((posts) => {
-    //need to have the ?user-comment-num in order to pass correct params
-    console.log(posts);
+   fetch('/get-posts').then(response => response.json()).then((posts) => {
     const messageBoard = document.getElementById('posts-container');
     posts.forEach((post) => {
-      messageBoard.appendChild(createPostEl(post));
+      messageBoard.appendChild(createCustomPostEl(post));
     })   });
+    //location.href = '/index.html';
 }
 
-function createPostEl(post) {
-  const postElem = document.createElement('li');
+function fetchBlob() {
+  fetch('/blobstore-upload-url').then((response) => {return response.text();}).then((imageUploadUrl) => {
+      const messageForm = document.getElementById('createPost');//this sets the action
+      messageForm.action = imageUploadUrl;//of the form to the blobstore url
+      });
+}
+
+function createCustomPostEl(post) {
+  const postElem = document.createElement('ul');
   postElem.className = 'Post';
 
+  const section = document.createElement('div');
+  section.className = 'topic';
+  section.style.border = "1px dotted black";
+
+  const profileHandler = document.createElement('div');
   const nameElem = document.createElement('span');
   nameElem.innerText = post.name;
-
-  const imgElem = document.createElement('img');
-  imgElem.src = post.imgUrl;
-
+  nameElem.style.fontSize = "20px";
+  profileHandler.appendChild(nameElem);
+  
+  const textHandler = document.createElement('div');
   const txtElem = document.createElement('span');
   var str = " posted: \n " + post.text;
   txtElem.innerText = str;
+  txtElem.style.fontSize = "16px";
+  textHandler.appendChild(txtElem);
 
-  postElem.appendChild(nameElem);
-  postElem.appendChild(imgElem);
-  postElem.appendChild(txtElem);
-  return postElem;
+  
+  const imageHandler = document.createElement('div');
+  const imgElem = document.createElement('img');
+  imgElem.src = post.imgUrl;
+  imgElem.style.width = "25%";
+  imgElem.style.height= "auto";
+  imageHandler.appendChild(imgElem);
+
+  postElem.appendChild(profileHandler);
+  postElem.appendChild(textHandler);
+  postElem.appendChild(imageHandler);
+
+  section.appendChild(postElem);
+  return section;
 }
 
-function uploadPost() {
-    var bucket = "adrian_posts_bucket";
-    //forms returns an HTML collection listing all the <form> elements contained in the doc
-    //HTML collection is a generic collection (array-like object similar to arguments) of elements
-    
-    //TODO: create fileID var fileID = getFileID();
-    
-    var userName = document.forms["putPost"]["name-input"].value;
-    var img = document.forms["putPost"]["img-input"].value;
-    //documnet.forms[name of the form][name of item in form]
-    //organized like a matrix
-
-    if (userName == null || userName == "" || text == null || text == "") {
-        alert("Both Name and Text are required");
-        return false;
-    } else {
-        var postData = document.forms["putPost"]["text-input"].value;
-        document.getElementById("text-input").value = null;
-
-        var request = new XMLHttpRequest();
-        request.open("POST", "/uspost?bucket=" + bucket, false);
-        //request.open(method, url[, async[, user[, password]]])
-        //[optional] async is a boolean parameter defaulting to true asking if the operation should be done asynchronously
-        //[optional] user is the username and password is the password, both used for auth purposes
-        request.setRequestHeader("Content-Type", "text/plain;charset=UTF-8");
-        request.send(postData);
-    }
-}
-
-function takeALook(){
-    var img = document.forms["putPost"]["img-input-file"].value;
-    confirm(document.getElementById("img-input"));
-}
