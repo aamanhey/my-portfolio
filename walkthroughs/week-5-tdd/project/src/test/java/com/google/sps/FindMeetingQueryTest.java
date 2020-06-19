@@ -389,7 +389,7 @@ public final class FindMeetingQueryTest {
         new Event("Event 5", TimeRange.fromStartEnd(TIME_1230AM, TimeRange.END_OF_DAY, true),
             Arrays.asList(PERSON_A)));
  
-    MeetingRequest request = new MeetingRequest(NO_ATTENDEES 6, DURATION_30_MINUTES);
+    MeetingRequest request = new MeetingRequest(NO_ATTENDEES, DURATION_30_MINUTES);
     request.addOptionalAttendee(PERSON_A);
     request.addOptionalAttendee(PERSON_B);
  
