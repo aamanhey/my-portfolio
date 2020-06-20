@@ -16,3 +16,4 @@ public final class Post {
     this.imgUrl = imgUrl;
   }
 }
+
