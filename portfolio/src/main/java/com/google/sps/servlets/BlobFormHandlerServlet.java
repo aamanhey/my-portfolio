@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/form-handler")
 public class BlobFormHandlerServlet extends HttpServlet {
-    
   static final String IMAGEURL_PARAM = "img-input";
   static final String NAME_PARAM = "name-input";
   static final String TEXT_PARAM = "text-input";
@@ -85,7 +84,7 @@ public class BlobFormHandlerServlet extends HttpServlet {
 
     // no file selected (dev)
     if (blobKeys == null || blobKeys.isEmpty()) {
-    return null;
+      return null;
     }
 
     BlobKey blobKey = blobKeys.get(0); // single file -> get first value
@@ -93,8 +92,8 @@ public class BlobFormHandlerServlet extends HttpServlet {
     // User submitted form without selecting a file, so we can't get a URL. (live server)
     BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
     if (blobInfo.getSize() == 0) {
-    blobstoreService.delete(blobKey);
-    return null;
+      blobstoreService.delete(blobKey);
+      return null;
     }
 
     // Use ImagesService to get a URL that points to the uploaded file.
@@ -106,10 +105,8 @@ public class BlobFormHandlerServlet extends HttpServlet {
     try {
       URL url = new URL(imagesService.getServingUrl(options));
       return url.getPath();
-    }
-    catch (MalformedURLException e) {
+    } catch (MalformedURLException e) {
       return imagesService.getServingUrl(options);
     }
-    }
+  }
 }
-

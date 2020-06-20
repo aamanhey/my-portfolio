@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/blobstore-upload-url")
 public class BlobstoreUploadServlet extends HttpServlet {
-  
   static final String URL_SERVLET_HANDLER_NAME = "/form-handler";
 
   @Override
@@ -41,4 +40,3 @@ public class BlobstoreUploadServlet extends HttpServlet {
     response.getWriter().println(uploadUrl);
   }
 }
-

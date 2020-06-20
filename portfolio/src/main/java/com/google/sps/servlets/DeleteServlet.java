@@ -33,4 +33,3 @@ public class DeleteServlet extends HttpServlet {
     response.getWriter().println();
   }
 }
-

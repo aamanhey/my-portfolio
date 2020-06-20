@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns stores and retrieves comments from datastore. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
-
   static final String IMAGEURL_PARAM = "img-input";
   static final String NAME_PARAM = "name-input";
   static final String TEXT_PARAM = "text-input";
@@ -50,7 +49,7 @@ public class DataServlet extends HttpServlet {
     Query query = new Query(ENTITY_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    
+
     // equal string and check to see if it null
     int numberLoaded = 0;
     String userNum = request.getParameter(COMMENT_AMOUNT_PARAM);
@@ -104,4 +103,3 @@ public class DataServlet extends HttpServlet {
     return gson.toJson(messages);
   }
 }
-

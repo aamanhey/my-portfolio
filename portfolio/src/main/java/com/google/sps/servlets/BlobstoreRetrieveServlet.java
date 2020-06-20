@@ -33,13 +33,12 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns stores and retrieves posts from datastore. */
 @WebServlet("/get-posts")
 public class BlobstoreRetrieveServlet extends HttpServlet {
-    
   static final int DEFAULT_NUMBER_POSTS = 5;
   static final String IMAGEURL_PROPERTY = "imageUrl";
   static final String NAME_PROPERTY = "name";
   static final String TEXT_PROPERTY = "text";
   static final String TIMESTAMP_PROPERTY = "timeStamp";
-  
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     Query query = new Query("Post").addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
@@ -52,7 +51,7 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
     for (Entity entity : results.asIterable()) {
       if (numberLoaded < DEFAULT_NUMBER_POSTS) {
         String imageUrl = (String) entity.getProperty(IMAGEURL_PROPERTY);
-        if(imageUrl != null && !(imageUrl.equals(""))){
+        if (imageUrl != null && !(imageUrl.equals(""))) {
           long id = entity.getKey().getId();
           String name = (String) entity.getProperty(NAME_PROPERTY);
           String text = (String) entity.getProperty(TEXT_PROPERTY);
@@ -61,8 +60,8 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
           Post post = new Post(id, name, text, timeStamp, imageUrl);
           posts.add(post);
           numberLoaded++;
-        }  
-      }else {
+        }
+      } else {
         break;
       }
     }
@@ -78,4 +77,3 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
     return gson.toJson(messages);
   }
 }
-
