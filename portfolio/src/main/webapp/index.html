@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body onload="getComments()">
+  <body onload="getContent()">
 
     <div class="header">
       <h1>Adrian's Portfolio</h1>
@@ -47,16 +47,20 @@
             </div>
             </div>
         <div class="midColumn">
-          <div class="topic">
-            <div id="interests_tab">
-              <h2>Interests</h2>
+          <div id="interests_tab">
+            <h2>Interests</h2>
+            <div class="topic">
               <h3>Cooking</h3>
-              <img src="images/Pizza.jpg" alt="Margherita Pizza" style="width:403px;height:302px;">
-              <p></p>
-              <img src="images/Me_Making_Pizza.jpg" alt="Making Pizza" style="width:302px;height:403px;">
+              <div class="gallery">
+                <h4>Pizza</h4>
+                <img src="images/Pizza.jpg" alt="Margherita Pizza" style="width:403px;height:302px;">
+                </div>
+              <div class="gallery">
+                <h4>Making the Pizza</h4>
+                <img src="images/Me_Making_Pizza.jpg" alt="Making Pizza" style="width:302px;height:403px;">
+                </div>
               <p class="img_desc">These two pictures come from a family pizza night. Made some leafy margherita pizza for my sisters and some sausage calzones for my parents!</p>
               </div>
-            </div>
           <div class="topic">
             <h3>Art</h3>
             <div class="gallery">
@@ -74,10 +78,16 @@
             <p class="img_desc">These are some pieces that I've created in the past year. I really enjoy working with pencil, pen, and alcohol markers but I've also started to work with Photoshop and Procreate to try some digital art. The self portrait is the first piece is the first artwork I've created digitally.
               </p>
             </div>
+            </div>
+            <div class="topic">
+              <h2>Posts</h2>
+              <div id = "posts-container"></div>
+              </div>
+              <button onclick="location.href = '/upload.html';" id="createPostButton" formaction="/upload.html">Add a comment</button>
           </div>
         <div class="sideColumn">
           <div class = "topic">
-              <h2>Comments</h2>
+              <h2>Website Comments</h2>
               <div id = "comments-container"></div>
               <form method="GET">
                 <p>How many comments would you like to view?(1-10)</p>
@@ -107,6 +117,12 @@
               <p>Phone: +1 (323) 572-4214</p>
               <p>Google Email: amanhey@google.com</p>
               <p>Oxy Email: amanhey@oxy.edu</p>
+              <a href="https://github.com/aamanhey/my-portfolio">
+                <img src="images/githublogo.jpg" alt="Github Link" style="width:84px;height:42px;">
+                </a>
+              <a href="https://www.linkedin.com/in/adrian-manhey-570382141">
+                <img src="images/linkedInLogo.png" alt="LinkedIn Link" style="width:42px;height:42px;">
+                </a>
               </div>
             </div>
           </div>
