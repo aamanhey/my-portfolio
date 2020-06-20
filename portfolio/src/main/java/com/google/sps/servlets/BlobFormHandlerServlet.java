@@ -43,21 +43,33 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/form-handler")
 public class BlobFormHandlerServlet extends HttpServlet {
+    
+  static final String IMAGEURL_PARAM = "img-input";
+  static final String NAME_PARAM = "name-input";
+  static final String TEXT_PARAM = "text-input";
+
+  static final String IMAGEURL_PROPERTY = "imageUrl";
+  static final String NAME_PROPERTY = "name";
+  static final String TEXT_PROPERTY = "text";
+  static final String TIMESTAMP_PROPERTY = "timeStamp";
+
+  static final String ENTITY_KIND = "Post";
+
   @Override
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String name = request.getParameter("name-input");
-    String message = request.getParameter("text-input");
-    String imageUrl = getUploadedFileUrl(request, "img-input");
+    String name = request.getParameter(NAME_PARAM);
+    String message = request.getParameter(TEXT_PARAM);
+    String imageUrl = getUploadedFileUrl(request, IMAGEURL_PARAM);
     long timeStamp = System.currentTimeMillis();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Entity postEntity = new Entity("Post");
+    Entity postEntity = new Entity(ENTITY_KIND);
 
-    postEntity.setProperty("name", name);
-    postEntity.setProperty("text", message);
-    postEntity.setProperty("imageUrl", imageUrl);
-    postEntity.setProperty("timeStamp", timeStamp);
+    postEntity.setProperty(NAME_PROPERTY, name);
+    postEntity.setProperty(TEXT_PROPERTY, message);
+    postEntity.setProperty(IMAGEURL_PROPERTY, imageUrl);
+    postEntity.setProperty(TIMESTAMP_PROPERTY, timeStamp);
 
     datastore.put(postEntity);
 
@@ -69,7 +81,7 @@ public class BlobFormHandlerServlet extends HttpServlet {
   private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
     Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
-    List<BlobKey> blobKeys = blobs.get("img-input");
+    List<BlobKey> blobKeys = blobs.get(IMAGEURL_PARAM);
 
     // no file selected (dev)
     if (blobKeys == null || blobKeys.isEmpty()) {
@@ -92,10 +104,12 @@ public class BlobFormHandlerServlet extends HttpServlet {
     // To support running in Google Cloud Shell with AppEngine's devserver, we must use the relative
     // path to the image, rather than the path returned by imagesService which contains a host.
     try {
-    URL url = new URL(imagesService.getServingUrl(options));
-    return url.getPath();
-    } catch (MalformedURLException e) {
-    return imagesService.getServingUrl(options);
+      URL url = new URL(imagesService.getServingUrl(options));
+      return url.getPath();
+    }
+    catch (MalformedURLException e) {
+      return imagesService.getServingUrl(options);
     }
     }
 }
+

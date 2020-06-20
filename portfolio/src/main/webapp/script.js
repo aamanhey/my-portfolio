@@ -57,7 +57,6 @@ function getCommentKey(){
 }
 
 function getComments(){
-   //confirm((new URL(document.location)).searchParams);
    fetch('/data?user-comment-num='+getUserNum()).then(response => response.json()).then((comments) => {
     //need to have the ?user-comment-num in order to pass correct params
     const messageBoard = document.getElementById('comments-container');
@@ -104,13 +103,11 @@ function getPostKey(){
 }
 
 function getPosts(){
-   //confirm((new URL(document.location)).searchParams);
    fetch('/get-posts').then(response => response.json()).then((posts) => {
     const messageBoard = document.getElementById('posts-container');
     posts.forEach((post) => {
       messageBoard.appendChild(createCustomPostEl(post));
     })   });
-    //location.href = '/index.html';
 }
 
 function fetchBlob() {

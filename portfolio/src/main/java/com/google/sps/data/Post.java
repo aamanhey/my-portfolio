@@ -1,6 +1,4 @@
 package com.google.sps.data;
-import com.google.cloud.storage.Blob;
-import com.google.cloud.storage.BlobId;
 
 /** A post on messageboard. */
 public final class Post {
@@ -18,3 +16,4 @@ public final class Post {
       this.imgUrl = imgUrl;
     }
 }
+

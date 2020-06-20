@@ -29,12 +29,16 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/blobstore-upload-url")
 public class BlobstoreUploadServlet extends HttpServlet {
+  
+  static final String URL_SERVLET_HANDLER_NAME = "/form-handler";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-    String uploadUrl = blobstoreService.createUploadUrl("/form-handler");
+    String uploadUrl = blobstoreService.createUploadUrl(URL_SERVLET_HANDLER_NAME);
 
     response.setContentType("text/html");
     response.getWriter().println(uploadUrl);
   }
 }
+
