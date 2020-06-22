@@ -23,19 +23,17 @@ import java.util.Set;
  
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-    //throw new UnsupportedOperationException("TODO: Implement this method.");
-    //method 1: start with the full day and substract time for each event
-        //start with the mandatory attendees - save as option 1
-        //for each optional attendee you can substract time
-        //want to maximize the number of people invited so will have to try different combinations
-        //start with person with least events
-        //get events for each person
-    //create a function that has an allday timerange at first and then progressively splits it up
 
     //create an all day timerange
     ArrayList<TimeRange> freeSlots = new ArrayList<TimeRange>();
-    freeSlots.add(TimeRange.WHOLE_DAY);
 
+    if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()){
+        //request is longer than a day
+        return freeSlots;
+    }
+ 
+    freeSlots.add(TimeRange.WHOLE_DAY);
+ 
     Collection<String> mandatoryAttendees = request.getAttendees();
     ArrayList<Event> mandatoryEvents = new ArrayList<Event>();
     ArrayList<Event> optionalEvents = new ArrayList<Event>();
@@ -47,16 +45,16 @@ public final class FindMeetingQuery {
             optionalEvents.add(event);
         }
     }
-
+ 
     //remove all the times of the mandatory events from the total timerange
     for(Event event: mandatoryEvents){
         freeSlots = removeConflict(freeSlots,event);
         freeSlots = cleanFreeSlots(freeSlots,request.getDuration());
-    } 
-
+    }
+    
     return freeSlots;
   }
-
+ 
   private static void printStringTimeRange(ArrayList<TimeRange> slots, String name){
     String slotsString = "The free slots for "+name+": ";
     for(TimeRange slot: slots){
@@ -64,7 +62,7 @@ public final class FindMeetingQuery {
     }
     System.out.println(slotsString);
   }
-
+ 
   private static void printStringEvent(ArrayList<Event> slots, String name){
     String slotsString = "The events for "+name+": ";
     for(Event slot: slots){
@@ -73,12 +71,12 @@ public final class FindMeetingQuery {
     slotsString += " with a length of "+ slots.size();
     System.out.println(slotsString);
   }
-
+ 
   private static void printTimeRange(TimeRange time, String name){
       String asString = "Timerange called " + name + " from " + time.start() + " to " + time.end() + ".";
       System.out.println(asString);
   }
-
+ 
   private boolean checkForOverlap(Collection<String> mandatory, Set<String> attendees){
       //compares to see if there is overlap in the attendees of a collection and set
       for(String person:attendees){
@@ -86,18 +84,18 @@ public final class FindMeetingQuery {
               return true;
           }
       }
-
+ 
       return false;
   }
-
+ 
   private ArrayList<TimeRange> removeConflict(ArrayList<TimeRange> freeSlots, Event event){
     TimeRange takenSlot = event.getWhen();
     int takenSlotStart = takenSlot.start();
     int takenSlotEnd = takenSlot.end();
-
+ 
     ArrayList<TimeRange> timeRangeHolderList = new ArrayList<TimeRange>();
     ArrayList<Integer> indexHolderList = new ArrayList<Integer>();
-
+ 
     for(TimeRange slot: freeSlots){
         if(slot.start() <= takenSlotStart && slot.end() >= takenSlotEnd){
           //  |------free--------|
@@ -105,31 +103,28 @@ public final class FindMeetingQuery {
           int slotIndex = freeSlots.indexOf(slot);
           TimeRange priorSlotTime = TimeRange.fromStartEnd(slot.start(),takenSlotStart,false);
           TimeRange postSlotTime = TimeRange.fromStartEnd(takenSlotEnd,slot.end(),false);
-          
+ 
           indexHolderList.add(slotIndex);
           timeRangeHolderList.add(postSlotTime);
           timeRangeHolderList.add(priorSlotTime);
-
         }else if(slot.start() < takenSlotStart && slot.end() > takenSlotStart){
           // |-----free----|
           //      |----event---|
           int slotIndex = freeSlots.indexOf(slot);
           TimeRange priorSlotTime = TimeRange.fromStartEnd(slot.start(),takenSlotStart,false);
-
+ 
           indexHolderList.add(slotIndex);
           timeRangeHolderList.add(null);//holder in the array
           timeRangeHolderList.add(priorSlotTime);
-
         }else if(slot.start() < takenSlotEnd && slot.end() > takenSlotEnd){
           //      |----free-----|
           // |---event----|
           int slotIndex = freeSlots.indexOf(slot);
           TimeRange postSlotTime = TimeRange.fromStartEnd(takenSlotEnd,slot.end(),false);
-
+ 
           indexHolderList.add(slotIndex);
           timeRangeHolderList.add(null);//holder in the array
           timeRangeHolderList.add(postSlotTime);
-
         }else{
           // no overlap
           // |--free--| |--event--|
@@ -139,8 +134,8 @@ public final class FindMeetingQuery {
         }
     }
     
-    int i; //index for the timeRange list
-    int j = 0; //index for the index holder list
+    int i;
+    int j = 0;
     int holderLength = timeRangeHolderList.size();
     for(i=0;i<holderLength;i+=2){
         int slotIndex = indexHolderList.get(i);
@@ -159,7 +154,7 @@ public final class FindMeetingQuery {
     }
     return freeSlots;
   }
-
+ 
   private ArrayList<TimeRange> cleanFreeSlots(ArrayList<TimeRange> freeSlots, long duration){
       //goes through the freeSlots and removes any timeranges less than the duration of the meeting
       ArrayList<Integer> indexHolderList = new ArrayList<Integer>();
@@ -171,9 +166,8 @@ public final class FindMeetingQuery {
       for(int index: indexHolderList){
         freeSlots.remove(index);
       }
-
+ 
       return freeSlots;
   }
 }
- 
 
