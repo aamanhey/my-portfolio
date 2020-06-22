@@ -23,26 +23,29 @@ import java.util.Set;
  
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
-
+ 
     //create an all day timerange
     ArrayList<TimeRange> freeSlots = new ArrayList<TimeRange>();
 
     if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()){
-        //request is longer than a day
-        return freeSlots;
+      //request is longer than a day
+      return freeSlots;
     }
- 
     freeSlots.add(TimeRange.WHOLE_DAY);
  
     Collection<String> mandatoryAttendees = request.getAttendees();
+    Collection<String> optionalAttendees = request.getOptionalAttendees();
     ArrayList<Event> mandatoryEvents = new ArrayList<Event>();
     ArrayList<Event> optionalEvents = new ArrayList<Event>();
+    
     //organize all the mandatory and optional events
     for(Event event: events){
         if(checkForOverlap(mandatoryAttendees,event.getAttendees())){
             mandatoryEvents.add(event);
-        }else{
+        }else if(checkForOverlap(optionalAttendees,event.getAttendees())){
             optionalEvents.add(event);
+        }else{
+            //not attending
         }
     }
  
@@ -51,30 +54,51 @@ public final class FindMeetingQuery {
         freeSlots = removeConflict(freeSlots,event);
         freeSlots = cleanFreeSlots(freeSlots,request.getDuration());
     }
-    
-    return freeSlots;
-  }
- 
-  private static void printStringTimeRange(ArrayList<TimeRange> slots, String name){
-    String slotsString = "The free slots for "+name+": ";
-    for(TimeRange slot: slots){
-        slotsString += slot + ", ";
+
+    ArrayList<TimeRange> mandatorySlots = new ArrayList<TimeRange>();
+    for(TimeRange each: freeSlots){
+        mandatorySlots.add(each);
     }
-    System.out.println(slotsString);
-  }
- 
-  private static void printStringEvent(ArrayList<Event> slots, String name){
-    String slotsString = "The events for "+name+": ";
-    for(Event slot: slots){
-        slotsString += "[" + slot.getWhen().start() + " to " + slot.getWhen().end() + "], ";
+    ArrayList<TimeRange> optionalFreeSlots = freeSlots;
+
+    //remove all the times of the optional events from the total timerange
+    for(Event event: optionalEvents){
+        optionalFreeSlots = freeSlots;
+        optionalFreeSlots = removeConflict(optionalFreeSlots,event);
+        optionalFreeSlots = cleanFreeSlots(optionalFreeSlots,request.getDuration());
     }
-    slotsString += " with a length of "+ slots.size();
-    System.out.println(slotsString);
+
+    if(optionalFreeSlots.size() > 0){
+        return optionalFreeSlots;
+    }else if(mandatoryEvents.size() == 0){
+        return new ArrayList<TimeRange>();
+    }else{
+        return mandatorySlots;
+    }
   }
- 
-  private static void printTimeRange(TimeRange time, String name){
-      String asString = "Timerange called " + name + " from " + time.start() + " to " + time.end() + ".";
-      System.out.println(asString);
+
+
+  private ArrayList<TimeRange> getNew(ArrayList<TimeRange> array1, ArrayList<TimeRange> array2){
+    // returns the unshared timeranges
+
+    ArrayList<TimeRange> holderList = new ArrayList<TimeRange>();
+    if(array1 ==null || array2 == null || array1.size() < 1 || array2.size() < 1){
+        return holderList;
+    }
+
+    holderList = array2;
+    if(array1.size() > array2.size()){
+        holderList = array1;
+        array1 = array2;
+        array2 = holderList;
+    }
+
+    for(TimeRange each: array1){
+        if(array2.contains(each)){
+            holderList.remove(each);
+        }
+    }
+    return holderList;
   }
  
   private boolean checkForOverlap(Collection<String> mandatory, Set<String> attendees){
@@ -87,6 +111,7 @@ public final class FindMeetingQuery {
  
       return false;
   }
+
  
   private ArrayList<TimeRange> removeConflict(ArrayList<TimeRange> freeSlots, Event event){
     TimeRange takenSlot = event.getWhen();
@@ -154,6 +179,7 @@ public final class FindMeetingQuery {
     }
     return freeSlots;
   }
+
  
   private ArrayList<TimeRange> cleanFreeSlots(ArrayList<TimeRange> freeSlots, long duration){
       //goes through the freeSlots and removes any timeranges less than the duration of the meeting
