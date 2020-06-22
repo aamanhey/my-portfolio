@@ -17,6 +17,7 @@ package com.google.sps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.ArrayList.*;
 import java.util.Arrays;
 import java.util.Set;
  
@@ -49,14 +50,36 @@ public final class FindMeetingQuery {
 
     //remove all the times of the mandatory events from the total timerange
     for(Event event: mandatoryEvents){
-        removeConflict(freeSlots,event);
-        cleanFreeSlots(freeSlots,request.getDuration());
-    }
+        freeSlots = removeConflict(freeSlots,event);
+        freeSlots = cleanFreeSlots(freeSlots,request.getDuration());
+    } 
 
     return freeSlots;
   }
 
-  private boolean checkForOverlap(Collection<String> mandatory, Set attendees){
+  private static void printStringTimeRange(ArrayList<TimeRange> slots, String name){
+    String slotsString = "The free slots for "+name+": ";
+    for(TimeRange slot: slots){
+        slotsString += slot + ", ";
+    }
+    System.out.println(slotsString);
+  }
+
+  private static void printStringEvent(ArrayList<Event> slots, String name){
+    String slotsString = "The events for "+name+": ";
+    for(Event slot: slots){
+        slotsString += "[" + slot.getWhen().start() + " to " + slot.getWhen().end() + "], ";
+    }
+    slotsString += " with a length of "+ slots.size();
+    System.out.println(slotsString);
+  }
+
+  private static void printTimeRange(TimeRange time, String name){
+      String asString = "Timerange called " + name + " from " + time.start() + " to " + time.end() + ".";
+      System.out.println(asString);
+  }
+
+  private boolean checkForOverlap(Collection<String> mandatory, Set<String> attendees){
       //compares to see if there is overlap in the attendees of a collection and set
       for(String person:attendees){
           if(mandatory.contains(person)){
@@ -72,30 +95,41 @@ public final class FindMeetingQuery {
     int takenSlotStart = takenSlot.start();
     int takenSlotEnd = takenSlot.end();
 
+    ArrayList<TimeRange> timeRangeHolderList = new ArrayList<TimeRange>();
+    ArrayList<Integer> indexHolderList = new ArrayList<Integer>();
+
     for(TimeRange slot: freeSlots){
         if(slot.start() <= takenSlotStart && slot.end() >= takenSlotEnd){
           //  |------free--------|
           //     |--event--|
           int slotIndex = freeSlots.indexOf(slot);
           TimeRange priorSlotTime = TimeRange.fromStartEnd(slot.start(),takenSlotStart,false);
-          TimeRange postSlotTime = TimeRange.fromStartEnd(slot.end(),takenSlotEnd,false);
-          freeSlots.remove(slot);
-          freeSlots.add(slotIndex,postSlotTime);
-          freeSlots.add(slotIndex,priorSlotTime);
-        }else if(slot.start() <= takenSlotStart && slot.end() <= takenSlotEnd){
+          TimeRange postSlotTime = TimeRange.fromStartEnd(takenSlotEnd,slot.end(),false);
+          
+          indexHolderList.add(slotIndex);
+          timeRangeHolderList.add(postSlotTime);
+          timeRangeHolderList.add(priorSlotTime);
+
+        }else if(slot.start() < takenSlotStart && slot.end() > takenSlotStart){
           // |-----free----|
           //      |----event---|
           int slotIndex = freeSlots.indexOf(slot);
           TimeRange priorSlotTime = TimeRange.fromStartEnd(slot.start(),takenSlotStart,false);
-          freeSlots.remove(slot);
-          freeSlots.add(slotIndex,priorSlotTime);
-        }else if(slot.start() >= takenSlotStart && slot.end() >= takenSlotEnd){
+
+          indexHolderList.add(slotIndex);
+          timeRangeHolderList.add(null);//holder in the array
+          timeRangeHolderList.add(priorSlotTime);
+
+        }else if(slot.start() < takenSlotEnd && slot.end() > takenSlotEnd){
           //      |----free-----|
           // |---event----|
           int slotIndex = freeSlots.indexOf(slot);
-          TimeRange postSlotTime = TimeRange.fromStartEnd(slot.end(),takenSlotEnd,false);
-          freeSlots.remove(slot);
-          freeSlots.add(slotIndex,postSlotTime);
+          TimeRange postSlotTime = TimeRange.fromStartEnd(takenSlotEnd,slot.end(),false);
+
+          indexHolderList.add(slotIndex);
+          timeRangeHolderList.add(null);//holder in the array
+          timeRangeHolderList.add(postSlotTime);
+
         }else{
           // no overlap
           // |--free--| |--event--|
@@ -103,17 +137,39 @@ public final class FindMeetingQuery {
           //     |--free--|
           // |-----event------|
         }
-
-        return freeSlots;
     }
+    
+    int i; //index for the timeRange list
+    int j = 0; //index for the index holder list
+    int holderLength = timeRangeHolderList.size();
+    for(i=0;i<holderLength;i+=2){
+        int slotIndex = indexHolderList.get(i);
+        freeSlots.remove(slotIndex);
+
+        if(holderLength > i && timeRangeHolderList.get(i) != null){
+        TimeRange postSlot = timeRangeHolderList.get(i);
+        freeSlots.add(slotIndex,postSlot);
+        }
+
+        if(holderLength > i+1 && timeRangeHolderList.get(i+1) != null){
+            TimeRange priorSlot = timeRangeHolderList.get(i+1);
+            freeSlots.add(slotIndex,priorSlot);
+        }
+        j++;
+    }
+    return freeSlots;
   }
 
   private ArrayList<TimeRange> cleanFreeSlots(ArrayList<TimeRange> freeSlots, long duration){
       //goes through the freeSlots and removes any timeranges less than the duration of the meeting
+      ArrayList<Integer> indexHolderList = new ArrayList<Integer>();
       for(TimeRange slot:freeSlots){
           if(slot.duration() < duration){
-              freeSlots.remove(slot);
+              indexHolderList.add(0,freeSlots.indexOf(slot));
           }
+      }
+      for(int index: indexHolderList){
+        freeSlots.remove(index);
       }
 
       return freeSlots;
