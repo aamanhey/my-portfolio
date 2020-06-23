@@ -33,28 +33,38 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns stores and retrieves comments from datastore. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  static final String IMAGEURL_PARAM = "img-input";
+  static final String NAME_PARAM = "name-input";
+  static final String TEXT_PARAM = "text-input";
+  static final String COMMENT_AMOUNT_PARAM = "user-comment-num";
+
+  static final String IMAGEURL_PROPERTY = "imageUrl";
+  static final String NAME_PROPERTY = "name";
+  static final String TEXT_PROPERTY = "text";
+  static final String TIMESTAMP_PROPERTY = "timeStamp";
+
+  static final String ENTITY_KIND = "Comment";
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timeStamp", SortDirection.DESCENDING);
+    Query query = new Query(ENTITY_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
     // equal string and check to see if it null
-    // if null set equal to default
-    String userNum = request.getParameter("user-comment-num");
+    int numberLoaded = 0;
+    String userNum = request.getParameter(COMMENT_AMOUNT_PARAM);
     int numberComments = 5;
     if (userNum != null) {
       numberComments = Integer.parseInt(userNum);
     }
-    int numberLoaded = 0;
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
     for (Entity entity : results.asIterable()) {
       if (numberLoaded < numberComments) {
         long id = entity.getKey().getId();
-        String name = (String) entity.getProperty("name");
-        String text = (String) entity.getProperty("text");
-        long timeStamp = (long) entity.getProperty("timeStamp");
+        String name = (String) entity.getProperty(NAME_PROPERTY);
+        String text = (String) entity.getProperty(TEXT_PROPERTY);
+        long timeStamp = (long) entity.getProperty(TIMESTAMP_PROPERTY);
 
         Comment comment = new Comment(id, name, text, timeStamp);
         comments.add(comment);
@@ -71,16 +81,16 @@ public class DataServlet extends HttpServlet {
   }
 
   public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    String name = request.getParameter("name-input");
-    String text = request.getParameter("text-input");
+    String name = request.getParameter(NAME_PARAM);
+    String text = request.getParameter(TEXT_PARAM);
     long timeStamp = System.currentTimeMillis();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("name", name);
-    commentEntity.setProperty("text", text);
-    commentEntity.setProperty("timeStamp", timeStamp);
+    Entity commentEntity = new Entity(ENTITY_KIND);
+    commentEntity.setProperty(NAME_PROPERTY, name);
+    commentEntity.setProperty(TEXT_PROPERTY, text);
+    commentEntity.setProperty(TIMESTAMP_PROPERTY, timeStamp);
 
     datastore.put(commentEntity);
 
@@ -93,3 +103,4 @@ public class DataServlet extends HttpServlet {
     return gson.toJson(messages);
   }
 }
+

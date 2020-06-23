@@ -33,30 +33,35 @@ import javax.servlet.http.HttpServletResponse;
 /** Servlet that returns stores and retrieves posts from datastore. */
 @WebServlet("/get-posts")
 public class BlobstoreRetrieveServlet extends HttpServlet {
+  static final int DEFAULT_NUMBER_POSTS = 5;
+  static final String IMAGEURL_PROPERTY = "imageUrl";
+  static final String NAME_PROPERTY = "name";
+  static final String TEXT_PROPERTY = "text";
+  static final String TIMESTAMP_PROPERTY = "timeStamp";
+
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Post").addSort("timeStamp", SortDirection.DESCENDING);
+    Query query = new Query("Post").addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
 
-    int numberPosts = 5;
     int numberLoaded = 0;
 
     ArrayList<Post> posts = new ArrayList<Post>();
     for (Entity entity : results.asIterable()) {
-      if (numberLoaded < numberPosts) {
-        String imageUrl = (String) entity.getProperty("imageUrl");
-        if(imageUrl != null && !(imageUrl.equals(""))){
-            long id = entity.getKey().getId();
-            String name = (String) entity.getProperty("name");
-            String text = (String) entity.getProperty("text");
-            long timeStamp = (long) entity.getProperty("timeStamp");
+      if (numberLoaded < DEFAULT_NUMBER_POSTS) {
+        String imageUrl = (String) entity.getProperty(IMAGEURL_PROPERTY);
+        if (imageUrl != null && !(imageUrl.equals(""))) {
+          long id = entity.getKey().getId();
+          String name = (String) entity.getProperty(NAME_PROPERTY);
+          String text = (String) entity.getProperty(TEXT_PROPERTY);
+          long timeStamp = (long) entity.getProperty(TIMESTAMP_PROPERTY);
 
-            Post post = new Post(id, name, text, timeStamp, imageUrl);
-            posts.add(post);
-            numberLoaded++;
-            }
-      }else {
+          Post post = new Post(id, name, text, timeStamp, imageUrl);
+          posts.add(post);
+          numberLoaded++;
+        }
+      } else {
         break;
       }
     }
@@ -72,3 +77,4 @@ public class BlobstoreRetrieveServlet extends HttpServlet {
     return gson.toJson(messages);
   }
 }
+

@@ -14,3 +14,4 @@ public final class Comment {
     this.timestamp = timestamp;
   }
 }
+
