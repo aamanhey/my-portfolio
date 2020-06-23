@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Upload to Blobstore</title>
+    <script src="script.js"></script>
+    <style>
+      /* Form is hidden by default. */
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body onload="getContent()">
+    <h1>Upload to Blobstore</h1>
+    <p>Type a message and click submit:</p>
+    <form method="POST" enctype="multipart/form-data" name="createPost" id="createPost">
+      <p>Name</p>
+      <input name="name-input" />
+      <p>Add an image</p>
+      <input name="img-input" type="file" value="Upload an Image"/>
+      <p>Description</p>
+      <textarea name="text-input">Type here!</textarea>
+      <br />
+      <input type="submit" value="Upload" />  
+    </form>
+    <br/>
+    <form action="/index.html">
+      <input type="submit" value="Go back to main page" /> 
+      </form>
+  </body>
+</html>
+

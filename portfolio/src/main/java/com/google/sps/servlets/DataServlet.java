@@ -20,68 +20,77 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Query.SortDirection;
-import java.io.IOException;
+import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import com.google.gson.Gson;
 
-/** Servlet that returns some example content. TODO: modify this file to handle comments data */
+/** Servlet that returns stores and retrieves comments from datastore. */
 @WebServlet("/data")
 public class DataServlet extends HttpServlet {
+  static final String IMAGEURL_PARAM = "img-input";
+  static final String NAME_PARAM = "name-input";
+  static final String TEXT_PARAM = "text-input";
+  static final String COMMENT_AMOUNT_PARAM = "user-comment-num";
 
+  static final String IMAGEURL_PROPERTY = "imageUrl";
+  static final String NAME_PROPERTY = "name";
+  static final String TEXT_PROPERTY = "text";
+  static final String TIMESTAMP_PROPERTY = "timeStamp";
+
+  static final String ENTITY_KIND = "Comment";
   @Override
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-    Query query = new Query("Comment").addSort("timestamp",SortDirection.DESCENDING);
+    Query query = new Query(ENTITY_KIND).addSort(TIMESTAMP_PROPERTY, SortDirection.DESCENDING);
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
     PreparedQuery results = datastore.prepare(query);
-    
-    //equal string and check to see if it null
-    //if null set equal to default
-    String userNum = request.getParameter("user-comment-num");
+
+    // equal string and check to see if it null
+    int numberLoaded = 0;
+    String userNum = request.getParameter(COMMENT_AMOUNT_PARAM);
     int numberComments = 5;
     if (userNum != null) {
-        numberComments = Integer.parseInt(userNum);
+      numberComments = Integer.parseInt(userNum);
     }
-    int numberLoaded = 0;
 
     ArrayList<Comment> comments = new ArrayList<Comment>();
-    for(Entity entity : results.asIterable()){
-        if (numberLoaded < numberComments){
-            long id = entity.getKey().getId();
-            String name = (String) entity.getProperty("name");
-            String text = (String) entity.getProperty("text");
-            long timestamp = (long) entity.getProperty("timestamp");
+    for (Entity entity : results.asIterable()) {
+      if (numberLoaded < numberComments) {
+        long id = entity.getKey().getId();
+        String name = (String) entity.getProperty(NAME_PROPERTY);
+        String text = (String) entity.getProperty(TEXT_PROPERTY);
+        long timeStamp = (long) entity.getProperty(TIMESTAMP_PROPERTY);
 
-            Comment comment = new Comment(id, name, text, timestamp);
-            comments.add(comment);
-            numberLoaded += 1;
-        }else{
-            break;
-        }
+        Comment comment = new Comment(id, name, text, timeStamp);
+        comments.add(comment);
+        numberLoaded++;
+      } else {
+        break;
+      }
     }
-    
-    String jsoncom = convertToJson(comments);
+
+    String jsonComments = convertToJson(comments);
 
     response.setContentType("application/json;");
-    response.getWriter().println(jsoncom);
-    }
-  
-  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-    String name = request.getParameter("name-input");
-    String text = request.getParameter("text-input");
-    long timestamp = System.currentTimeMillis();
+    response.getWriter().println(jsonComments);
+  }
+
+  public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    String name = request.getParameter(NAME_PARAM);
+    String text = request.getParameter(TEXT_PARAM);
+    long timeStamp = System.currentTimeMillis();
 
     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
-    Entity commentEntity = new Entity("Comment");
-    commentEntity.setProperty("name",name);
-    commentEntity.setProperty("text",text);
-    commentEntity.setProperty("timestamp",timestamp);
+    Entity commentEntity = new Entity(ENTITY_KIND);
+    commentEntity.setProperty(NAME_PROPERTY, name);
+    commentEntity.setProperty(TEXT_PROPERTY, text);
+    commentEntity.setProperty(TIMESTAMP_PROPERTY, timeStamp);
 
     datastore.put(commentEntity);
 
@@ -90,7 +99,8 @@ public class DataServlet extends HttpServlet {
   }
 
   private static String convertToJson(ArrayList<Comment> messages) {
-        Gson gson = new Gson();
-        return gson.toJson(messages);
-    }
+    Gson gson = new Gson();
+    return gson.toJson(messages);
+  }
 }
+
