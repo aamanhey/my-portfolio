@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
- 
+
 package com.google.sps;
- 
+
 /**
  * Utility class for creating greeting messages.
  */
@@ -21,19 +21,18 @@ public class Greeter {
   /**
    * Returns a greeting for the given name.
    */
-  //default trimmer 
+  // default trimmer
   public String greet(String name) {
-    return "Hello " + name.trim().replaceAll("[@#$%!? ]","");
+    return "Hello " + name.trim().replaceAll("[@#$%!? ]", "");
   }
 
-  //custom trimmer
-  private static final String[] invalidArray = {" ","@","%","!"};
-  
+  // custom trimmer
+  private static final String[] INVALID_ARRAY = {" ", "@", "%", "!"};
+
   public String greetFromSpecificList(String name) {
-    for(String c: invalidArray){
-        name = name.replaceAll(c,"");
+    for (String c : INVALID_ARRAY) {
+      name = name.replaceAll(c, "");
     }
     return "Hello " + name;
   }
 }
-
