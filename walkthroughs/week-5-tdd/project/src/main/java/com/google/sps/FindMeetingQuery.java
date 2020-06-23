@@ -14,17 +14,17 @@
  
 package com.google.sps;
  
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.ArrayList.*;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Collection;
 import java.util.Set;
  
 public final class FindMeetingQuery {
   public Collection<TimeRange> query(Collection<Event> events, MeetingRequest request) {
  
-    //create an all day timerange
+    //create an empty timerange and if the rquest is less than a day then populates it with a WHOLE_DAY timerange
     ArrayList<TimeRange> freeSlots = new ArrayList<TimeRange>();
 
     if(request.getDuration() >= TimeRange.WHOLE_DAY.duration()){
@@ -44,8 +44,6 @@ public final class FindMeetingQuery {
             mandatoryEvents.add(event);
         }else if(checkForOverlap(optionalAttendees,event.getAttendees())){
             optionalEvents.add(event);
-        }else{
-            //not attending
         }
     }
  
@@ -68,9 +66,9 @@ public final class FindMeetingQuery {
         optionalFreeSlots = cleanFreeSlots(optionalFreeSlots,request.getDuration());
     }
 
-    if(optionalFreeSlots.size() > 0){
+    if(!optionalFreeSlots.isEmpty()){
         return optionalFreeSlots;
-    }else if(mandatoryEvents.size() == 0){
+    }else if(mandatoryEvents.isEmpty()){
         return new ArrayList<TimeRange>();
     }else{
         return mandatorySlots;
@@ -150,19 +148,12 @@ public final class FindMeetingQuery {
           indexHolderList.add(slotIndex);
           timeRangeHolderList.add(null);//holder in the array
           timeRangeHolderList.add(postSlotTime);
-        }else{
-          // no overlap
-          // |--free--| |--event--|
-          // free slot not big enough
-          //     |--free--|
-          // |-----event------|
         }
     }
     
-    int i;
     int j = 0;
     int holderLength = timeRangeHolderList.size();
-    for(i=0;i<holderLength;i+=2){
+    for(int i=0;i<holderLength;i+=2){
         int slotIndex = indexHolderList.get(i);
         freeSlots.remove(slotIndex);
 
