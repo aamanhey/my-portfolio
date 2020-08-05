@@ -21,7 +21,18 @@ public class Greeter {
   /**
    * Returns a greeting for the given name.
    */
+  // default trimmer
   public String greet(String name) {
+    return "Hello " + name.trim().replaceAll("[@#$%!? ]", "");
+  }
+
+  // custom trimmer
+  private static final String[] INVALID_ARRAY = {" ", "@", "%", "!"};
+
+  public String greetFromSpecificList(String name) {
+    for (String c : INVALID_ARRAY) {
+      name = name.replaceAll(c, "");
+    }
     return "Hello " + name;
   }
 }
